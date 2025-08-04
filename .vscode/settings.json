@@ -1,0 +1,24 @@
+{
+<<<<<<< HEAD
+    "sqltools.connections": [
+        {
+            "mysqlOptions": {
+                "authProtocol": "default",
+                "enableSsl": "Disabled"
+            },
+            "previewLimit": 50,
+            "server": "localhost",
+            "port": 3306,
+            "driver": "MySQL",
+            "name": "vocational_discovery",
+            "group": "PVD",
+            "database": "vocational_discovery",
+            "username": "root",
+            "password": "root"
+        }
+    ],
+    "postman.settings.dotenv-detection-notification-visibility": false
+=======
+    "commentTranslate.multiLineMerge": true
+>>>>>>> e03602578a72715d8039086653293c4dce59fe4f
+}
