@@ -150,6 +150,7 @@ router.post(
       })
 
       logger.info(`User logged in: ${email}`)
+       console.log("Token generado al iniciar sesión:", token) // <-- Agregado
 
       res.json({
         success: true,

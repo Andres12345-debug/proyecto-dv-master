@@ -115,15 +115,40 @@ router.post(
           }
         }
 
-        // Recomendaciones
+        // Recomendaciones de carreras y universidades
         const topAptitudes = aptitudeScores
           .filter((a) => a.total_score > 0)
           .slice(0, 3)
           .map((a) => a.id)
 
-        let recommendations = []
+        let careerRecommendations = []
+        let universityRecommendations = []
+
         if (topAptitudes.length > 0) {
           const placeholders = topAptitudes.map(() => "?").join(",")
+          // Carreras compatibles
+          const [careerRecs] = await connection.execute(
+            `
+            SELECT DISTINCT
+              c.id,
+              c.name,
+              c.description,
+              c.duration_years,
+              COUNT(ca.aptitude_id) as matching_aptitudes,
+              ROUND((COUNT(ca.aptitude_id) / ?) * 100, 2) as match_percentage
+            FROM careers c
+            JOIN career_aptitudes ca ON c.id = ca.career_id
+            WHERE ca.aptitude_id IN (${placeholders})
+            GROUP BY c.id
+            HAVING matching_aptitudes > 0
+            ORDER BY match_percentage DESC
+            LIMIT 10
+            `,
+            [topAptitudes.length, ...topAptitudes],
+          )
+          careerRecommendations = careerRecs
+
+          // Universidades compatibles (como antes)
           const [universityRecs] = await connection.execute(
             `
             SELECT DISTINCT
@@ -146,7 +171,7 @@ router.post(
             `,
             [topAptitudes.length, ...topAptitudes],
           )
-          recommendations = universityRecs
+          universityRecommendations = universityRecs
         }
 
         await connection.commit()
@@ -163,7 +188,8 @@ router.post(
               ? Math.round((a.total_score / a.max_possible) * 100)
               : 0
           })),
-          recommendations,
+          careers: careerRecommendations,
+          universities: universityRecommendations,
         })
       } catch (error) {
         await connection.rollback()
@@ -266,3 +292,5 @@ router.get("/:testId", async (req, res) => {
 })
 
 module.exports = router
+
+

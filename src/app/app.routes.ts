@@ -38,6 +38,11 @@ export const routes: Routes = [
     canActivate: [AuthGuard, AdminGuard],
   },
   {
+    path: "careers",
+    loadChildren: () => import("./features/careers/careers.routes").then((m) => m.careersRoutes),
+    canActivate: [AuthGuard],
+  },
+  {
     path: "**",
     loadComponent: () => import("./shared/components/not-found/not-found.component").then((m) => m.NotFoundComponent),
   },

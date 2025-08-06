@@ -86,12 +86,9 @@ router.get(
       u.email,
       u.phone,
       u.rating,
-      u.created_at,
-      COUNT(c.id) as career_count
+      u.created_at
     FROM universities u
-    LEFT JOIN careers c ON u.id = c.university_id
     WHERE ${whereClause}
-    GROUP BY u.id
     ORDER BY u.rating DESC, u.name ASC
     LIMIT ${limitNum} OFFSET ${offsetNum}
   `,
@@ -193,36 +190,24 @@ router.get("/:id", [authenticateToken, param("id").isInt().withMessage("ID debe 
 
     const university = universities[0]
 
-    // Obtener carreras de la universidad
-    const careers = await executeQuery(
-      `
-      SELECT
-        id,
-        name,
-        description,
-        duration_years
-      FROM careers
-      WHERE university_id = ?
-      ORDER BY name ASC
-    `,
-      [universityId],
-    )
+    // Obtener carreras de la universidad (ya no hay relación, así que solo obtenemos todas las carreras o ninguna)
+    // Si quieres mostrar todas las carreras disponibles, usa:
+    // const careers = await executeQuery(
+    //   `
+    //   SELECT
+    //     id,
+    //     name,
+    //     description,
+    //     duration_years
+    //   FROM careers
+    //   ORDER BY name ASC
+    //   `
+    // )
+    // Si no quieres mostrar carreras aquí, simplemente deja careers como un array vacío:
+    const careers = []
 
-    // Obtener aptitudes relacionadas (ajusta si tu modelo es career_aptitudes)
-    const aptitudes = await executeQuery(
-      `
-      SELECT
-        a.name,
-        a.description,
-        ca.importance_level
-      FROM careers c
-      JOIN career_aptitudes ca ON c.id = ca.career_id
-      JOIN aptitudes a ON ca.aptitude_id = a.id
-      WHERE c.university_id = ?
-      ORDER BY ca.importance_level DESC
-    `,
-      [universityId],
-    )
+    // Obtener aptitudes relacionadas (ya no hay relación con university_id)
+    const aptitudes = []
 
     res.json({
       ...university,
@@ -236,5 +221,55 @@ router.get("/:id", [authenticateToken, param("id").isInt().withMessage("ID debe 
     })
   }
 })
+
+// POST /api/universities/match-careers - Obtener carreras que coinciden con aptitudes
+router.post(
+  "/match-careers",
+  [authenticateToken, query("aptitudeIds").isArray().withMessage("aptitudeIds debe ser un array")],
+  async (req, res) => {
+    try {
+      const errors = validationResult(req)
+      if (!errors.isEmpty()) {
+        return res.status(400).json({
+          error: "Parámetros inválidos",
+          details: errors.array(),
+        })
+      }
+
+      const { aptitudeIds } = req.query
+
+      // Obtener carreras que coinciden con las aptitudes
+      const careers = await executeQuery(
+        `
+        SELECT DISTINCT
+          c.id,
+          c.name,
+          c.description,
+          c.duration_years,
+          c.university_id,
+          u.name AS university_name,
+          COUNT(ca.aptitude_id) as matching_aptitudes,
+          ROUND((COUNT(ca.aptitude_id) / ?) * 100, 2) as match_percentage
+        FROM careers c
+        JOIN career_aptitudes ca ON c.id = ca.career_id
+        JOIN universities u ON c.university_id = u.id
+        WHERE ca.aptitude_id IN (?, ?, ?)
+        GROUP BY c.id
+        HAVING matching_aptitudes > 0
+        ORDER BY match_percentage DESC
+        LIMIT 10
+      `,
+        [aptitudeIds.length, ...aptitudeIds],
+      )
+
+      res.json(careers)
+    } catch (error) {
+      console.error("Error obteniendo carreras coincidentes:", error)
+      res.status(500).json({
+        error: "Error obteniendo carreras coincidentes",
+      })
+    }
+  },
+)
 
 module.exports = router

@@ -24,11 +24,20 @@ export interface Aptitude {
   score: number
 }
 
+export interface CareerRecommendation {
+  id: number
+  name: string
+  description?: string
+  duration_years?: number
+  match_percentage?: number
+}
+
 export interface TestResult {
   id: number
   testId?: number
   completed_at?: string
   user_id?: number
   aptitudes: Aptitude[]
+  careers: CareerRecommendation[]
   recommendations: any[]
 }

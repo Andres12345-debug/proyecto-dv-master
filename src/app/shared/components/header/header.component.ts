@@ -57,7 +57,7 @@ import { AuthService } from '../../../core/services/auth.service';
             <li class="nav-item">
               <a
                 class="nav-link"
-                routerLink="/carreras"
+                routerLink="/careers"
                 routerLinkActive="active"
               >
                 <i class="bi bi-journal-bookmark me-1"></i>Carreras
