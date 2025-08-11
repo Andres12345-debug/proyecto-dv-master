@@ -73,6 +73,44 @@ import { TestResult } from "../../../core/models/test.model"
             </div>
           </div>
 
+            <!-- Career Recommendations -->
+          <div class="card shadow-lg border-0 mb-5" *ngIf="(testResult?.careers?.length ?? 0) > 0">
+            <div class="card-header bg-gradient-info text-white">
+              <h3 class="mb-0">
+                <i class="material-icons me-2">work</i>
+                Carreras Recomendadas
+              </h3>
+            </div>
+            <div class="card-body p-4">
+              <p class="text-muted mb-4">
+                Estas carreras se alinean mejor con tus aptitudes principales:
+              </p>
+              <div class="row">
+                <div
+                  *ngFor="let career of testResult?.careers?.slice(0, 6)"
+                  class="col-lg-6 mb-4"
+                >
+                  <div class="career-card h-100">
+                    <div class="d-flex justify-content-between align-items-start mb-2">
+                      <h5 class="career-name mb-0">{{ career.name }}</h5>
+                      <div class="match-badge">
+                        {{ career.match_percentage }}% match
+                      </div>
+                    </div>
+                    <div class="career-details mt-2">
+                      <span class="badge bg-info">{{ career.duration_years }} años</span>
+                      <p class="text-muted mt-2">{{ career.description }}</p>
+                    </div>
+                    <button class="btn btn-outline-primary btn-sm mt-2" [routerLink]="['/careers', career.id]">
+                      Ver Detalles
+                    </button>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+
           <!-- University Recommendations -->
           <div class="card shadow-lg border-0 mb-5" *ngIf="testResult && testResult.recommendations.length > 0">
             <div class="card-header bg-gradient-success text-white">
@@ -127,43 +165,7 @@ import { TestResult } from "../../../core/models/test.model"
             </div>
           </div>
 
-          <!-- Career Recommendations -->
-          <div class="card shadow-lg border-0 mb-5" *ngIf="(testResult?.careers?.length ?? 0) > 0">
-            <div class="card-header bg-gradient-info text-white">
-              <h3 class="mb-0">
-                <i class="material-icons me-2">work</i>
-                Carreras Recomendadas
-              </h3>
-            </div>
-            <div class="card-body p-4">
-              <p class="text-muted mb-4">
-                Estas carreras se alinean mejor con tus aptitudes principales:
-              </p>
-              <div class="row">
-                <div
-                  *ngFor="let career of testResult?.careers?.slice(0, 6)"
-                  class="col-lg-6 mb-4"
-                >
-                  <div class="career-card h-100">
-                    <div class="d-flex justify-content-between align-items-start mb-2">
-                      <h5 class="career-name mb-0">{{ career.name }}</h5>
-                      <div class="match-badge">
-                        {{ career.match_percentage }}% match
-                      </div>
-                    </div>
-                    <div class="career-details mt-2">
-                      <span class="badge bg-info">{{ career.duration_years }} años</span>
-                      <p class="text-muted mt-2">{{ career.description }}</p>
-                    </div>
-                    <button class="btn btn-outline-primary btn-sm mt-2" [routerLink]="['/careers', career.id]">
-                      Ver Detalles
-                    </button>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-
+        
           <!-- Action Buttons -->
           <div class="text-center">
             <div class="d-flex flex-wrap gap-3 justify-content-center">
