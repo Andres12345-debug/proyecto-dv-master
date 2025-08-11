@@ -10,6 +10,8 @@ const testsRouter = require("./routes/tests")
 const universityRoutes = require("./routes/universities")
 const userRoutes = require("./routes/users")
 const logger = require("./utils/logger")
+const careersRouter = require("./routes/careers")
+
 
 const app = express()
 const PORT = process.env.PORT || 3000
@@ -45,6 +47,8 @@ app.use("/api/auth", authRoutes)
 app.use("/api/test", testsRouter)
 app.use("/api/universities", universityRoutes)
 app.use("/api/users", userRoutes)
+app.use("/api/careers", careersRouter)
+
 
 // Health check endpoint
 app.get("/api/health", (req, res) => {

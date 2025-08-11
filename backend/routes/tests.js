@@ -238,8 +238,11 @@ router.get("/:testId", async (req, res) => {
         .map((a) => a.id)
 
       let recommendations = []
+      let careerRecommendations = []
       if (topAptitudes.length > 0) {
         const placeholders = topAptitudes.map(() => "?").join(",")
+
+        // Universidades recomendadas
         const universityRecs = await executeQuery(
           `
           SELECT DISTINCT
@@ -263,6 +266,28 @@ router.get("/:testId", async (req, res) => {
           [topAptitudes.length, ...topAptitudes],
         )
         recommendations = universityRecs
+
+        // Carreras recomendadas (igual que en el POST)
+        const [careerRecs] = await connection.execute(
+          `
+          SELECT DISTINCT
+            c.id,
+            c.name,
+            c.description,
+            c.duration_years,
+            COUNT(ca.aptitude_id) as matching_aptitudes,
+            ROUND((COUNT(ca.aptitude_id) / ?) * 100, 2) as match_percentage
+          FROM careers c
+          JOIN career_aptitudes ca ON c.id = ca.career_id
+          WHERE ca.aptitude_id IN (${placeholders})
+          GROUP BY c.id
+          HAVING matching_aptitudes > 0
+          ORDER BY match_percentage DESC
+          LIMIT 10
+          `,
+          [topAptitudes.length, ...topAptitudes],
+        )
+        careerRecommendations = careerRecs
       }
 
       res.json({
@@ -278,6 +303,7 @@ router.get("/:testId", async (req, res) => {
             : 0
         })),
         recommendations,
+        careers: careerRecommendations, // <-- AGREGA ESTA LÍNEA
       })
     } catch (error) {
       connection.release()

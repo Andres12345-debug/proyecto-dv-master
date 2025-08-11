@@ -39,7 +39,7 @@ export class CareerListComponent implements OnInit {
 
   ngOnInit(): void {
     this.careerService.getCareers().subscribe({
-      next: (careers) => this.careers = careers,
+      next: (response) => this.careers = response.data,
       error: () => this.careers = []
     })
   }

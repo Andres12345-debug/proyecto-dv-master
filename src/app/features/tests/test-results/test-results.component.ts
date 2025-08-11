@@ -383,35 +383,37 @@ export class TestResultsComponent implements OnInit {
   }
 
   private loadTestResults(testId: number): void {
-    console.log("Cargando resultados para testId:", testId);
-    this.errorMessage = ""
-    this.loadingService.show()
-    this.testService.getTestResults(testId).subscribe({
-      next: (result) => {
-        console.log("Respuesta recibida en resultados:", result)
-        if (result && (result.id || result.testId)) {
-          this.testResult = {
-            ...result,
-            aptitudes: Array.isArray(result.aptitudes) ? result.aptitudes : [],
-            recommendations: Array.isArray(result.recommendations) ? result.recommendations : [],
-          }
-          console.log("Valor asignado a testResult:", this.testResult)
-          this.errorMessage = ""
-        } else {
-          this.testResult = null
-          this.errorMessage = "No se pudo cargar el resultado del test."
-        }
-        this.loadingService.hide()
-      },
-      error: (error) => {
-        this.loadingService.hide()
-        this.testResult = null
-        this.errorMessage = error.message || error.error?.error || "Error cargando los resultados del test"
-        console.error("Error loading test results:", error)
-        alert("Error loading test results: " + JSON.stringify(error))
-      },
-    })
-  }
+  console.log("Cargando resultados para testId:", testId);
+  this.errorMessage = "";
+  this.loadingService.show();
+  this.testService.getTestResults(testId).subscribe({
+    next: (result) => {
+      console.log("Respuesta recibida en resultados:", result);
+      if (result && (result.id || result.testId)) {
+        this.testResult = {
+          ...result,
+          aptitudes: Array.isArray(result.aptitudes) ? result.aptitudes : [],
+          recommendations: Array.isArray(result.recommendations) ? result.recommendations : [],
+          careers: Array.isArray(result.careers) ? result.careers : [], // <--- Aquí el cambio
+        };
+        console.log("Valor asignado a testResult:", this.testResult);
+        this.errorMessage = "";
+      } else {
+        this.testResult = null;
+        this.errorMessage = "No se pudo cargar el resultado del test.";
+      }
+      this.loadingService.hide();
+    },
+    error: (error) => {
+      this.loadingService.hide();
+      this.testResult = null;
+      this.errorMessage = error.message || error.error?.error || "Error cargando los resultados del test";
+      console.error("Error loading test results:", error);
+      alert("Error loading test results: " + JSON.stringify(error));
+    },
+  });
+}
+
 
   getTotalScore(): number {
   return this.testResult?.aptitudes.reduce((acc, apt) => acc + apt.score, 0) || 1

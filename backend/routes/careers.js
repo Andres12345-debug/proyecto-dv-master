@@ -69,7 +69,7 @@ router.get(
   }
 )
 
-// Obtener detalle de una carrera por ID
+// Obtener detalle de una carrera por ID con aptitudes relacionadas
 router.get(
   "/:id",
   [authenticateToken, param("id").isInt().withMessage("ID debe ser un número")],
@@ -92,6 +92,19 @@ router.get(
       if (careers.length === 0) {
         return res.status(404).json({ error: "Carrera no encontrada" })
       }
+
+      // Obtener aptitudes relacionadas
+      const aptitudes = await executeQuery(
+        `
+        SELECT a.id, a.name, a.description
+        FROM aptitudes a
+        JOIN career_aptitudes ca ON ca.aptitude_id = a.id
+        WHERE ca.career_id = ?
+        `,
+        [id]
+      )
+
+      careers[0].aptitudes = aptitudes
 
       res.json(careers[0])
     } catch (error) {

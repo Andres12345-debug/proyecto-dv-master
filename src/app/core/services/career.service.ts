@@ -3,6 +3,13 @@ import { HttpClient } from "@angular/common/http"
 import { Observable } from "rxjs"
 import { Career } from "../models/career.model"
 
+interface CareersResponse {
+  data: Career[]
+  total: number
+  page: number
+  limit: number
+}
+
 @Injectable({
   providedIn: "root"
 })
@@ -11,8 +18,8 @@ export class CareerService {
 
   constructor(private http: HttpClient) {}
 
-  getCareers(): Observable<Career[]> {
-    return this.http.get<Career[]>(this.apiUrl)
+  getCareers(): Observable<CareersResponse> {
+    return this.http.get<CareersResponse>(this.apiUrl)
   }
 
   getCareerById(id: number): Observable<Career> {
