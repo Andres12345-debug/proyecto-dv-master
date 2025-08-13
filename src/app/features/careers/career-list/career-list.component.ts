@@ -2,6 +2,7 @@ import { Component, OnInit } from "@angular/core"
 import { CommonModule } from "@angular/common"
 import { RouterModule } from "@angular/router"
 import { CareerService } from "../../../core/services/career.service"
+import { TestService } from "../../../core/services/test.service"
 import { Career } from "../../../core/models/career.model"
 
 @Component({
@@ -10,8 +11,16 @@ import { Career } from "../../../core/models/career.model"
   imports: [CommonModule, RouterModule],
   template: `
     <div class="container py-4">
-      <h2 class="mb-4">Listado de Carreras</h2>
-      <div class="row">
+    <div class="page-header">
+            <h1 class="display-6 fw-bold text-primary-custom mb-2">
+              <i class="material-icons me-3"></i>
+              Explorar Carreras
+            </h1>
+            <p class="lead text-muted">
+              Encuentra la carrera perfecta para tu futuro académico y profesional.
+            </p>
+          </div>
+    <div class="row">
         <div *ngFor="let career of careers" class="col-md-6 mb-3">
           <div class="card shadow-sm career-card">
             <div class="card-body">
@@ -35,12 +44,33 @@ import { Career } from "../../../core/models/career.model"
 export class CareerListComponent implements OnInit {
   careers: Career[] = []
 
-  constructor(private careerService: CareerService) {}
+  constructor(
+    private careerService: CareerService,
+    private testService: TestService
+  ) { }
 
   ngOnInit(): void {
-    this.careerService.getCareers().subscribe({
-      next: (response) => this.careers = response.data,
-      error: () => this.careers = []
+    // Cargar todas las carreras normales
+    this.testService.getTestResults(1).subscribe({
+      next: (test) => {
+        if (Array.isArray(test.careers)) {
+          const nuevas: Career[] = test.careers.map(c => ({
+            id: c.id,
+            name: c.name,
+            description: c.description ?? '',
+            duration_years: c.duration_years ?? 0, // valor por defecto
+            aptitudes: []
+          }))
+
+          // Evitar duplicados por ID
+          const sinDuplicados = nuevas.filter(
+            tCareer => !this.careers.some(c => c.id === tCareer.id)
+          )
+
+          this.careers = [...this.careers, ...sinDuplicados]
+        }
+      }
     })
+
   }
 }
