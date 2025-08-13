@@ -93,9 +93,6 @@ import { TestResult } from "../../../core/models/test.model"
                   <div class="career-card h-100">
                     <div class="d-flex justify-content-between align-items-start mb-2">
                       <h5 class="career-name mb-0">{{ career.name }}</h5>
-                      <div class="match-badge">
-                        {{ career.match_percentage }}% match
-                      </div>
                     </div>
                     <div class="career-details mt-2">
                       <span class="badge bg-info">{{ career.duration_years }} años</span>
