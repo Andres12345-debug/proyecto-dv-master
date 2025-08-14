@@ -5,18 +5,14 @@
 
 
     -- Aptitudes
-    INSERT INTO aptitudes (name, description) VALUES
-    ('Matemáticas', 'Habilidad para resolver problemas matemáticos y trabajar con números'),
-    ('Ciencias', 'Interés y habilidad en ciencias naturales, física, química y biología'),
-    ('Tecnología', 'Aptitud para trabajar con tecnología, programación y sistemas'),
-    ('Arte y Creatividad', 'Habilidades artísticas, creatividad y expresión visual'),
-    ('Comunicación', 'Habilidades de comunicación oral y escrita'),
-    ('Liderazgo', 'Capacidad de liderar equipos y tomar decisiones'),
-    ('Análisis', 'Habilidad para analizar información y resolver problemas complejos'),
-    ('Trabajo en Equipo', 'Capacidad para colaborar efectivamente con otros'),
-    ('Emprendimiento', 'Iniciativa para crear y desarrollar proyectos propios'),
-    ('Servicio Social', 'Interés en ayudar a otros y contribuir a la sociedad');
-
+       CREATE TABLE IF NOT EXISTS career_aptitudes (
+      career_id INT,
+      aptitude_id INT,
+      importance_level VARCHAR(10),
+      PRIMARY KEY (career_id, aptitude_id),
+      FOREIGN KEY (career_id) REFERENCES careers(id) ON DELETE CASCADE,
+      FOREIGN KEY (aptitude_id) REFERENCES aptitudes(id) ON DELETE CASCADE
+    );
     -- Preguntas
     INSERT INTO questions (text, question_order, is_active) VALUES
     ('¿Qué actividad te resulta más interesante?', 1, 1),
