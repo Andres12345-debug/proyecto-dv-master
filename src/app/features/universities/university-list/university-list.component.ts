@@ -22,7 +22,7 @@ import { debounceTime, distinctUntilChanged } from "rxjs/operators"
               Explorar Universidades
             </h1>
             <p class="lead text-muted">
-              Encuentra la universidad perfecta para tu futuro académico
+              Encuentra la universidad perfecta para tu futuro académicoOOOO
             </p>
           </div>
         </div>
