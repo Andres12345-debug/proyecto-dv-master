@@ -8,24 +8,50 @@ import { Career } from "../models/career.model";
   providedIn: "root"
 })
 export class CareerService {
-  // 🔹 Usamos ruta relativa para que Angular CLI la redirija vía proxy.conf.json
-  private apiUrl = "/api/careers";
+  private apiUrl = "/api/careers"; // 🔹 Endpoint base
 
   constructor(private http: HttpClient) {}
 
+  // ✅ Obtener todas las carreras
+ getAllCareers(): Observable<Career[]> {
+  const token = localStorage.getItem("token");
+  const headers = new HttpHeaders({
+    Authorization: `Bearer ${token}`,
+  });
+
+  return this.http.get<Career[]>(`${this.apiUrl}/all`, { headers }).pipe(
+    tap((response) => {
+      console.log("📦 Respuesta cruda del backend (all careers):", response);
+    }),
+    map((careers) =>
+      careers.map((career) => ({
+        id: career.id,
+        name: career.name || "Carrera desconocida",
+        description: career.description || "",
+        duration_years: career.duration_years ?? 0,
+        aptitudes: career.aptitudes || [],
+      }))
+    ),
+    catchError((error) => {
+      console.error("❌ Error obteniendo todas las carreras:", error);
+      return of([]);
+    })
+  );
+}
+
+
+  // ✅ Obtener carrera por ID
   getCareerById(id: number): Observable<Career> {
-    const token = localStorage.getItem("token"); // JWT guardado
+    const token = localStorage.getItem("token");
     const headers = new HttpHeaders({
       Authorization: `Bearer ${token}`
     });
 
     return this.http.get<Career>(`${this.apiUrl}/${id}`, { headers }).pipe(
-      // 👀 log de lo que realmente responde el backend
       tap((response) => {
         console.log("📦 Respuesta cruda del backend (career):", response);
       }),
       map((career) => ({
-        // Garantizamos que todos los campos obligatorios existan
         id: career.id,
         name: career.name || "Carrera desconocida",
         description: career.description || "",
@@ -34,7 +60,6 @@ export class CareerService {
       })),
       catchError((error) => {
         console.error(`❌ Error obteniendo carrera ${id}:`, error);
-        // Devolver un objeto por defecto para no romper la UI
         return of({
           id,
           name: "Carrera no encontrada",

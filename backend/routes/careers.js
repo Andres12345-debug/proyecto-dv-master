@@ -69,6 +69,32 @@ router.get(
   }
 )
 
+// Obtener TODAS las carreras sin paginación ni filtros
+router.get(
+  "/all",
+  [authenticateToken],
+  async (req, res) => {
+    try {
+      const careers = await executeQuery(
+        `
+        SELECT
+          c.id,
+          c.name,
+          c.description,
+          c.duration_years
+        FROM careers c
+        ORDER BY c.name ASC
+        `
+      )
+
+      res.json(careers)
+    } catch (error) {
+      console.error("Error al obtener todas las carreras:", error)
+      res.status(500).json({ error: "Error al obtener todas las carreras" })
+    }
+  }
+)
+
 // Obtener detalle de una carrera por ID con aptitudes relacionadas
 router.get(
   "/:id",
