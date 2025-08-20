@@ -1,13 +1,14 @@
 import { Injectable } from "@angular/core";
 import { HttpClient, HttpHeaders } from "@angular/common/http";
-import { Observable, of, throwError } from "rxjs";
-import { catchError, map } from "rxjs/operators";
+import { Observable, of } from "rxjs";
+import { catchError, map, tap } from "rxjs/operators";
 import { Career } from "../models/career.model";
 
 @Injectable({
   providedIn: "root"
 })
 export class CareerService {
+  // 🔹 Usamos ruta relativa para que Angular CLI la redirija vía proxy.conf.json
   private apiUrl = "/api/careers";
 
   constructor(private http: HttpClient) {}
@@ -19,6 +20,10 @@ export class CareerService {
     });
 
     return this.http.get<Career>(`${this.apiUrl}/${id}`, { headers }).pipe(
+      // 👀 log de lo que realmente responde el backend
+      tap((response) => {
+        console.log("📦 Respuesta cruda del backend (career):", response);
+      }),
       map((career) => ({
         // Garantizamos que todos los campos obligatorios existan
         id: career.id,
@@ -28,7 +33,7 @@ export class CareerService {
         aptitudes: career.aptitudes || []
       })),
       catchError((error) => {
-        console.error(`Error obteniendo carrera ${id}:`, error);
+        console.error(`❌ Error obteniendo carrera ${id}:`, error);
         // Devolver un objeto por defecto para no romper la UI
         return of({
           id,
