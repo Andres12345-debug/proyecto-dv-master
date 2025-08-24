@@ -20,6 +20,7 @@ import { AuthService } from "../../../core/services/auth.service"
         </div>
 
         <form [formGroup]="registerForm" (ngSubmit)="onSubmit()">
+          <!-- ================= CAMPOS DEL FORMULARIO ================= -->
           <div class="row">
             <div class="col-md-6 mb-3">
               <label for="name" class="form-label">
@@ -162,11 +163,15 @@ import { AuthService } from "../../../core/services/auth.service"
             ></textarea>
           </div>
 
+          <!-- ================= CHECKBOX TÉRMINOS ================= -->
           <div class="mb-4">
             <div class="form-check">
               <input class="form-check-input" type="checkbox" id="acceptTerms" formControlName="acceptTerms">
               <label class="form-check-label" for="acceptTerms">
-                Acepto los <a href="#" class="text-decoration-none">términos y condiciones</a>
+                Acepto los 
+                <a href="#" class="text-decoration-none" (click)="openModal($event)">
+                  términos y condiciones
+                </a>
               </label>
               <div class="invalid-feedback" *ngIf="isFieldInvalid('acceptTerms')">
                 Debes aceptar los términos y condiciones
@@ -174,6 +179,7 @@ import { AuthService } from "../../../core/services/auth.service"
             </div>
           </div>
 
+          <!-- ================= ALERTAS ================= -->
           <div class="alert alert-danger" *ngIf="errorMessage">
             <i class="bi bi-exclamation-triangle me-2"></i>
             {{ errorMessage }}
@@ -184,6 +190,7 @@ import { AuthService } from "../../../core/services/auth.service"
             {{ successMessage }}
           </div>
 
+          <!-- ================= BOTÓN ================= -->
           <button
             type="submit"
             class="btn btn-primary w-100 mb-3"
@@ -205,6 +212,36 @@ import { AuthService } from "../../../core/services/auth.service"
         </form>
       </div>
     </div>
+
+    <!-- ================= MODAL TÉRMINOS ================= -->
+    <div class="modal fade" id="termsModal" tabindex="-1" aria-labelledby="termsModalLabel" aria-hidden="true">
+      <div class="modal-dialog modal-lg modal-dialog-centered">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title" id="termsModalLabel">Términos y Condiciones</h5>
+            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cerrar"></button>
+          </div>
+          <div class="modal-body">
+            <p>
+              Estos son los términos y condiciones de uso de nuestra plataforma. 
+              Al registrarte, aceptas cumplir con las reglas de convivencia, 
+              la política de privacidad y el uso responsable de los servicios.
+            </p>
+            <ul>
+              <li>No está permitido compartir información falsa.</li>
+              <li>El uso indebido de la plataforma resultará en la suspensión de la cuenta.</li>
+              <li>La información personal se manejará según nuestra política de privacidad.</li>
+            </ul>
+            <p>
+              Si no estás de acuerdo con alguno de estos términos, te recomendamos no registrarte.
+            </p>
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
+          </div>
+        </div>
+      </div>
+    </div>
   `,
   styles: [
     `
@@ -216,7 +253,6 @@ import { AuthService } from "../../../core/services/auth.service"
       justify-content: center;
       padding: 2rem;
     }
-
     .auth-card {
       background: white;
       border-radius: 16px;
@@ -225,7 +261,6 @@ import { AuthService } from "../../../core/services/auth.service"
       max-width: 600px;
       box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
     }
-
     .logo {
       width: 80px;
       height: 80px;
@@ -236,17 +271,11 @@ import { AuthService } from "../../../core/services/auth.service"
       justify-content: center;
       margin: 0 auto;
     }
-
     .logo i {
       font-size: 2.5rem;
       color: white;
     }
-
-    .form-label {
-      font-weight: 600;
-      color: #374151;
-    }
-
+    .form-label { font-weight: 600; color: #374151; }
     .btn-primary {
       background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
       border: none;
@@ -254,20 +283,14 @@ import { AuthService } from "../../../core/services/auth.service"
       font-weight: 600;
       transition: all 0.3s ease;
     }
-
     .btn-primary:hover {
       transform: translateY(-2px);
-      box-shadow: 0 10px 20px rgba(102, 126, 234, 0.3);
+      box-shadow: 0 10px 20px rgba(102,126,234,0.3);
     }
-
     @media (max-width: 576px) {
-      .auth-card {
-        padding: 2rem 1.5rem;
-        margin: 1rem;
-      }
+      .auth-card { padding: 2rem 1.5rem; margin: 1rem; }
     }
-  `,
-  ],
+  `],
 })
 export class RegisterComponent implements OnInit {
   registerForm!: FormGroup
@@ -342,5 +365,14 @@ export class RegisterComponent implements OnInit {
       const control = this.registerForm.get(key)
       control?.markAsTouched()
     })
+  }
+
+  openModal(event: Event) {
+    event.preventDefault()
+    const modalEl = document.getElementById("termsModal")
+    if (modalEl) {
+      const modal = new (window as any).bootstrap.Modal(modalEl)
+      modal.show()
+    }
   }
 }
