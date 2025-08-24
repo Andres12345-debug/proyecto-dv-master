@@ -14,7 +14,7 @@ import { Career } from "../../../core/models/career.model"
       <div class="page-header">
         <h1 class="display-6 fw-bold text-primary-custom mb-2">
           <i class="material-icons me-3"></i>
-          Explorar Carreras
+          Explorar Tus Carreras
         </h1>
         <p class="lead text-muted">
           Encuentra la carrera perfecta para tu futuro académico y profesional.
