@@ -27,7 +27,7 @@ interface DashboardStats {
           <div class="d-flex justify-content-between align-items-center">
             <div>
               <h1 class="display-6 fw-bold text-primary-custom mb-2">
-                <i class="material-icons me-3">admin_panel_settings</i>
+                <i class="material-icons me-3"></i>
                 Panel de Administración
               </h1>
               <p class="lead text-muted">
@@ -36,21 +36,21 @@ interface DashboardStats {
             </div>
             <div class="admin-actions">
               <button class="btn btn-outline-primary me-2" (click)="refreshData()">
-                <i class="material-icons me-2">refresh</i>
+                <i class="material-icons me-2"></i>
                 Actualizar
               </button>
               <div class="dropdown">
                 <button class="btn btn-primary dropdown-toggle" type="button" data-bs-toggle="dropdown">
-                  <i class="material-icons me-2">add</i>
+                  <i class="material-icons me-2"></i>
                   Crear Nuevo
                 </button>
                 <ul class="dropdown-menu">
                   <li><a class="dropdown-item" routerLink="/admin/universities">
-                    <i class="material-icons me-2">school</i>
+                    <i class="material-icons me-2"></i>
                     Universidad
                   </a></li>
                   <li><a class="dropdown-item" routerLink="/admin/questions">
-                    <i class="material-icons me-2">quiz</i>
+                    <i class="material-icons me-2"></i>
                     Pregunta
                   </a></li>
                 </ul>

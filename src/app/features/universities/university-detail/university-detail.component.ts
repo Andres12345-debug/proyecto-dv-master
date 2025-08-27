@@ -39,7 +39,7 @@ import { University } from "../../../core/models/university.model"
                     <i class="material-icons me-2">{{ university.location }}, {{ university.country }}</i>
                   </div>
                   <div class="rating">
-                    <i class="material-icons me-1 text-warning">star</i>
+                    <i class="material-icons me-1 text-warning"><i class="bi bi-star-fill"></i></i>
                     <span class="fw-bold">{{ university.rating }}</span>
                     <span class="text-muted">/5.0</span>
                   </div>
@@ -60,7 +60,7 @@ import { University } from "../../../core/models/university.model"
                   target="_blank"
                   class="btn btn-outline-primary btn-lg mb-2 w-100"
                 >
-                  <i class="material-icons me-3"><i class="bi bi-geo"></i>Visitar Sitio Web</i>
+                  <i class="material-icons me-3"><i class="bi bi-geo"></i>Visita el Sitio Web</i>
 
                 </a>
                 <button class="btn btn-primary btn-lg w-100">

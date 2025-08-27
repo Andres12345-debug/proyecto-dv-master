@@ -16,7 +16,7 @@ import { TestResult } from "../../../core/models/test.model"
           <!-- Success Header -->
           <div class="text-center mb-5" *ngIf="testResult">
             <div class="success-icon mb-4">
-              <i class="material-icons">psychology</i>
+              <i class="material-icons"></i>
             </div>
             <h1 class="display-5 fw-bold text-primary-custom mb-3">
               ¡Test Completado!
@@ -30,7 +30,7 @@ import { TestResult } from "../../../core/models/test.model"
           <div class="card shadow-lg border-0 mb-5" *ngIf="testResult">
             <div class="card-header bg-gradient-primary text-white">
               <h3 class="mb-0">
-                <i class="material-icons me-2">trending_up</i>
+                <i class="material-icons me-2"></i>
                 Tus Aptitudes Principales
               </h3>
             </div>
@@ -75,9 +75,9 @@ import { TestResult } from "../../../core/models/test.model"
 
             <!-- Career Recommendations -->
           <div class="card shadow-lg border-0 mb-5" *ngIf="(testResult?.careers?.length ?? 0) > 0">
-            <div class="card-header bg-gradient-info text-white">
+            <div class="card-header bg-gradient-success text-white">
               <h3 class="mb-0">
-                <i class="material-icons me-2">work</i>
+                <i class="material-icons me-2"></i>
                 Carreras Recomendadas
               </h3>
             </div>
@@ -112,7 +112,7 @@ import { TestResult } from "../../../core/models/test.model"
           <div class="card shadow-lg border-0 mb-5" *ngIf="testResult && testResult.recommendations.length > 0">
             <div class="card-header bg-gradient-success text-white">
               <h3 class="mb-0">
-                <i class="material-icons me-2">school</i>
+                <i class="material-icons me-2"></i>
                 Universidades Recomendadas
               </h3>
             </div>
@@ -148,7 +148,7 @@ import { TestResult } from "../../../core/models/test.model"
 
                       <div class="d-flex justify-content-between align-items-center">
                         <div class="rating">
-                          <i class="material-icons text-warning me-1">star</i>
+                          <i class="material-icons text-warning me-1"><i class="bi bi-star-fill"></i></i>
                           <span>{{ university.rating }}</span>
                         </div>
                         <button class="btn btn-outline-primary btn-sm" routerLink="/universities">
@@ -167,15 +167,15 @@ import { TestResult } from "../../../core/models/test.model"
           <div class="text-center">
             <div class="d-flex flex-wrap gap-3 justify-content-center">
               <a routerLink="/universities" class="btn btn-primary btn-lg">
-                <i class="material-icons me-2">explore</i>
+                <i class="material-icons me-2"></i>
                 Explorar Universidades
               </a>
               <a routerLink="/test" class="btn btn-outline-secondary btn-lg">
-                <i class="material-icons me-2">refresh</i>
+                <i class="material-icons me-2"></i>
                 Repetir Test
               </a>
               <a routerLink="/profile" class="btn btn-outline-info btn-lg">
-                <i class="material-icons me-2">person</i>
+                <i class="material-icons me-2"></i>
                 Ver Mi Perfil
               </a>
             </div>
@@ -210,8 +210,9 @@ import { TestResult } from "../../../core/models/test.model"
     }
 
     .bg-gradient-success {
-      background: linear-gradient(135deg, #56ab2f 0%, #a8e6cf 100%);
+      background: linear-gradient(135deg, #0e918aff 0%, #26614bff 100%);
     }
+    
 
     .success-icon {
       width: 120px;
@@ -238,7 +239,7 @@ import { TestResult } from "../../../core/models/test.model"
 
     .aptitude-card {
       background: white;
-      border: 1px solid #e9ecef;
+      border: 1px solid #e9ecefff;
       border-radius: 15px;
       padding: 20px;
       transition: all 0.3s ease;

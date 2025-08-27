@@ -23,9 +23,9 @@ import { TestResult } from "../../core/models/test.model"
                   <h1 class="card-title h2 mb-3">¡Hola, <strong>{{ currentUser?.name }}</strong>!</h1>
                   <p class="card-text lead mb-0">
                     Bienvenido a tu panel de descubrimiento vocacional.<br>
-                     - Este es tu espacio personalizado para <strong> explorar, aprender y tomar decisiones inteligentes</strong> sobre tu futuro académico y profesional.<br>
-                     - Aquí encontrarás herramientas diseñadas para guiarte en este emocionante viaje de autoconocimiento.<br>
-                    ¡Empieza ahora y desbloquea todo tu potencial! 🚀💡
+                     - Este es tu espacio personalizado para <br><strong> explorar, aprender y tomar decisiones inteligentes</strong> sobre tu futuro académico y profesional.<br>
+                     - Aquí encontrarás herramientas diseñadas <br>para guiarte en este emocionante viaje de autoconocimiento.<br>
+                    ¡Empieza ahora y desbloquea todo tu potencial!
                   </p>
                 </div>
                 <div class="col-md-4 text-center">

@@ -17,7 +17,7 @@
     INSERT INTO questions (text, question_order, is_active) VALUES
     ('¿Qué actividad te resulta más interesante?', 1, 1),
     ('¿En qué tipo de ambiente prefieres trabajar?', 2, 1),
-    ('¿Qué tipo de problemas te gusta resolver?', 3, 1),
+    ('¿Qué tipo de problemas te gusta resolver?', 3, 1), 
     ('¿Cómo prefieres aprender nuevas cosas?', 4, 1),
     ('¿Qué te motiva más en un trabajo?', 5, 1),
     ('¿Qué habilidad consideras tu fortaleza?', 6, 1),
