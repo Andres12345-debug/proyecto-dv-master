@@ -16,7 +16,7 @@ import { TestResult } from "../../../core/models/test.model"
           <!-- Success Header -->
           <div class="text-center mb-5" *ngIf="testResult">
             <div class="success-icon mb-4">
-              <i class="material-icons"></i>
+              <i class="material-icons"><i class="bi bi-check-circle"></i></i>
             </div>
             <h1 class="display-5 fw-bold text-primary-custom mb-3">
               ¡Test Completado!
@@ -110,7 +110,7 @@ import { TestResult } from "../../../core/models/test.model"
 
           <!-- University Recommendations -->
           <div class="card shadow-lg border-0 mb-5" *ngIf="testResult && testResult.recommendations.length > 0">
-            <div class="card-header bg-gradient-success text-white">
+            <div class="card-header bg-gradient-second text-white">
               <h3 class="mb-0">
                 <i class="material-icons me-2"></i>
                 Universidades Recomendadas
@@ -206,24 +206,28 @@ import { TestResult } from "../../../core/models/test.model"
   styles: [
     `
     .bg-gradient-primary {
-      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      background: linear-gradient(135deg, #667eea 0%, #623491ff 100%);
     }
 
     .bg-gradient-success {
-      background: linear-gradient(135deg, #0e918aff 0%, #26614bff 100%);
+      background: linear-gradient(135deg, #1280a1ff 0%, #6ad4d4ff 100%);
     }
     
+     .bg-gradient-second {
+      background: linear-gradient(135deg, #155710ff  0%, #94e78dff 100%);
+    }
 
     .success-icon {
       width: 120px;
       height: 120px;
-      background: linear-gradient(135deg, #56ab2f 0%, #a8e6cf 100%);
+      background: linear-gradient(135deg, #764ba2 0%, #a8e6cf 100%);
       border-radius: 50%;
       display: flex;
       align-items: center;
       justify-content: center;
       margin: 0 auto;
       animation: pulse 2s infinite;
+      
     }
 
     .success-icon i {

@@ -12,7 +12,7 @@ import { RouterModule } from "@angular/router"
         <div class="col-lg-8">
           <div class="text-center mb-5">
             <div class="test-icon mb-4">
-              <i class="bi bi-clipboard-check text-primary"></i>
+           <i class="bi bi-clipboard-check-fill text-primary"></i>
             </div>
             <h1 class="display-5 fw-bold mb-3">Test de Orientación Vocacional</h1>
             <p class="lead text-muted">

@@ -236,9 +236,6 @@ import { AuthService } from "../../../core/services/auth.service"
               Si no estás de acuerdo con alguno de estos términos, te recomendamos no registrarte.
             </p>
           </div>
-          <div class="modal-footer">
-            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
-          </div>
         </div>
       </div>
     </div>
