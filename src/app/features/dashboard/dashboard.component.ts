@@ -15,26 +15,50 @@ import { TestResult } from "../../core/models/test.model"
     <div class="container-fluid py-4">
       <!-- Welcome Section -->
       <div class="row mb-4">
-        <div class="col-12">
-          <div class="card bg-gradient-primary text-white border-0">
-            <div class="card-body p-4">
-              <div class="row align-items-center">
-                <div class="col-md-8">
-                  <h1 class="card-title h2 mb-3">¡Hola, <strong>{{ currentUser?.name }}</strong>!</h1>
-                  <p class="card-text lead mb-0">
-                    Bienvenido a tu panel de descubrimiento vocacional.<br>
-                     - Este es tu espacio personalizado para <br><strong> explorar, aprender y tomar decisiones inteligentes</strong> sobre tu futuro académico y profesional.<br>
-                     - Aquí encontrarás herramientas diseñadas <br>para guiarte en este emocionante viaje de autoconocimiento.<br>
-                    ¡Empieza ahora y desbloquea todo tu potencial!
-                  </p>
-                </div>
-                <div class="col-md-4 text-center">
-                  <i class="bi bi-mortarboard-fill" style="font-size: 5rem; opacity: 0.3;"></i>
-                </div>
-              </div>
-            </div>
+       <div class="col-12">
+  <div class="card border-0 shadow-sm">
+    <div class="card-body p-5">
+      <div class="row align-items-center">
+        
+        <!-- Icono / Imagen a la izquierda -->
+        <div class="col-md-4 text-center mb-4 mb-md-0">
+          <i class="bi bi-mortarboard-fill" style="font-size: 6rem; color: #8b5cf6;"></i>
+
+
+          <!-- Si quieres avatar dinámico:
+          <img [src]="currentUser?.avatarUrl" 
+               class="img-fluid rounded-circle" 
+               alt="{{ currentUser?.name }}">
+          -->
+        </div>
+
+        <!-- Texto a la derecha -->
+        <div class="col-md-8 text-md-start text-center">
+          <h1 class="card-title display-6 fw-bold mb-4">
+            ¡Hola, <strong>{{ currentUser?.name }}</strong>! 👋
+          </h1>
+          <p class="lead mb-4">
+  Bienvenido a tu panel de descubrimiento vocacional, <strong>{{ currentUser?.name }}</strong>. 
+  Este es tu espacio personalizado para <strong>explorar, aprender y tomar decisiones inteligentes</strong> sobre tu futuro académico y profesional, donde encontrarás herramientas diseñadas para guiarte en este emocionante viaje de autoconocimiento. 
+  ¡Empieza ahora y desbloquea todo tu potencial, <strong>{{ currentUser?.name }}</strong>!
+</p>
+
+          <div class="d-grid d-sm-flex gap-3">
+            <a href="/test/" 
+               class="btn btn-success btn-lg fw-bold px-4">
+               TEST
+            </a>
+            <a href="/carrers" 
+               class="btn btn-outline-secondary btn-lg fw-bold px-4">
+               YA SE QUE ESTUDIAR
+            </a>
           </div>
         </div>
+
+      </div>
+    </div>
+  </div>
+</div>
       </div>
 
       <!-- Quick Stats -->

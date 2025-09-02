@@ -129,20 +129,20 @@ router.get(
 )
 
 // GET /api/universities/countries - Obtener lista de países
-router.get("/countries", authenticateToken, async (req, res) => {
+router.get("/locations", authenticateToken, async (req, res) => {
   try {
-    const countries = await executeQuery(`
-      SELECT DISTINCT country
+    const locations = await executeQuery(`
+      SELECT DISTINCT location
       FROM universities
-      WHERE country IS NOT NULL
-      ORDER BY country ASC
+      WHERE location IS NOT NULL
+      ORDER BY location ASC
     `)
 
-    res.json(countries.map((c) => c.country))
+    res.json(locations.map((l) => l.location))
   } catch (error) {
-    console.error("Error obteniendo países:", error)
+    console.error("Error obteniendo locations:", error)
     res.status(500).json({
-      error: "Error obteniendo países",
+      error: "Error obteniendo locations",
     })
   }
 })

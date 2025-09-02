@@ -22,7 +22,7 @@ import { debounceTime, distinctUntilChanged } from "rxjs/operators"
               Explorar Universidades
             </h1>
             <p class="lead text-muted">
-              Encuentra la universidad perfecta para tu futuro académicoOOOO
+              Encuentra la universidad perfecta para tu futuro académico
             </p>
           </div>
         </div>
@@ -42,7 +42,7 @@ import { debounceTime, distinctUntilChanged } from "rxjs/operators"
                 id="search"
                 class="form-control"
                 formControlName="search"
-                placeholder="Nombre de universidad, carrera..."
+                placeholder="Nombre de universidades..."
               >
             </div>
             <div class="col-md-2">
@@ -413,13 +413,18 @@ export class UniversityListComponent implements OnInit {
   isLoading = false
   errorMessage = ""
 
+  locations: string[] = [];
   constructor(
     private fb: FormBuilder,
     private universityService: UniversityService,
     private loadingService: LoadingService,
   ) {}
 
-  ngOnInit(): void {
+  ngOnInit(): void { 
+    this.universityService.getCountries().subscribe({
+    next: (cities) => (this.locations = cities), // aunque se llame getCountries, devuelve ciudades
+    error: () => (this.locations = []),
+  });
     this.initForm()
     this.loadCountries()
     this.loadUniversities()
