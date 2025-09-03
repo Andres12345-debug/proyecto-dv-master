@@ -94,10 +94,12 @@ import { Question, TestAnswer } from "../../../core/models/test.model"
                     [disabled]="!selectedOption"
                     (click)="nextQuestion()"
                   >
-                    <span *ngIf="currentQuestionIndex < questions.length - 1">
+                   <span *ngIf="currentQuestionIndex < questions.length - 1" 
+                          (click)="goNext()">
                       Siguiente
                       <i class="material-icons ms-2"><i class="bi bi-arrow-right-circle-fill"></i></i>
                     </span>
+
                     <span *ngIf="currentQuestionIndex === questions.length - 1">
                       Finalizar Test
                       <i class="material-icons ms-2">check</i>
@@ -279,7 +281,7 @@ export class TestQuestionsComponent implements OnInit {
     private testService: TestService,
     private router: Router,
     private loadingService: LoadingService,
-  ) {}
+  ) { }
 
   ngOnInit(): void {
     this.loadQuestions()
@@ -398,4 +400,13 @@ export class TestQuestionsComponent implements OnInit {
     this.errorMessage = ""
     this.submitTest()
   }
+
+  goNext() {
+  this.currentQuestionIndex++;
+  setTimeout(() => {
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  }, 0);
+}
+
+
 }
