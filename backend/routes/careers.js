@@ -64,12 +64,16 @@ router.get(
         limit,
       })
     } catch (error) {
+      console.error("Error en GET /careers:", error)
       res.status(500).json({ error: "Error al obtener las carreras" })
     }
   }
 )
 
-// Obtener TODAS las carreras sin paginación ni filtros
+/**
+ * ✅ Obtener TODAS las carreras de la tabla (todas las columnas) sin paginación ni filtros
+ *    Útil para combos, exportaciones, o vistas completas.
+ */
 router.get(
   "/all",
   [authenticateToken],
@@ -78,10 +82,7 @@ router.get(
       const careers = await executeQuery(
         `
         SELECT
-          c.id,
-          c.name,
-          c.description,
-          c.duration_years
+          c.*
         FROM careers c
         ORDER BY c.name ASC
         `
@@ -91,6 +92,62 @@ router.get(
     } catch (error) {
       console.error("Error al obtener todas las carreras:", error)
       res.status(500).json({ error: "Error al obtener todas las carreras" })
+    }
+  }
+)
+
+/**
+ * (Opcional) ✅ Obtener TODAS las carreras con sus aptitudes relacionadas
+ *   - Requiere tablas: aptitudes(a.id, a.name, a.description)
+ *     y career_aptitudes(career_id, aptitude_id)
+ *   - Devuelve una lista de carreras; cada carrera trae un arreglo `aptitudes`.
+ *   - Compatible con MySQL 8+ usando JSON_ARRAYAGG/JSON_OBJECT.
+ */
+router.get(
+  "/all/with-aptitudes",
+  [authenticateToken],
+  async (req, res) => {
+    try {
+      const rows = await executeQuery(
+        `
+        SELECT
+          c.id,
+          c.name,
+          c.description,
+          c.duration_years,
+          COALESCE(
+            JSON_ARRAYAGG(
+              CASE
+                WHEN a.id IS NULL THEN NULL
+                ELSE JSON_OBJECT(
+                  'id', a.id,
+                  'name', a.name,
+                  'description', a.description
+                )
+              END
+            ),
+            JSON_ARRAY()
+          ) AS aptitudes
+        FROM careers c
+        LEFT JOIN career_aptitudes ca ON ca.career_id = c.id
+        LEFT JOIN aptitudes a ON a.id = ca.aptitude_id
+        GROUP BY c.id, c.name, c.description, c.duration_years
+        ORDER BY c.name ASC
+        `
+      )
+
+      // Quitar posibles NULL dentro del array si alguna carrera no tiene aptitudes
+      const data = rows.map(r => ({
+        ...r,
+        aptitudes: Array.isArray(r.aptitudes)
+          ? r.aptitudes.filter(Boolean)
+          : JSON.parse(r.aptitudes || "[]").filter(Boolean)
+      }))
+
+      res.json(data)
+    } catch (error) {
+      console.error("Error en GET /careers/all/with-aptitudes:", error)
+      res.status(500).json({ error: "Error al obtener las carreras con aptitudes" })
     }
   }
 )
@@ -131,9 +188,9 @@ router.get(
       )
 
       careers[0].aptitudes = aptitudes
-
       res.json(careers[0])
     } catch (error) {
+      console.error("Error en GET /careers/:id", error)
       res.status(500).json({ error: "Error al obtener la carrera" })
     }
   }
