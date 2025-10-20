@@ -63,6 +63,15 @@ import { AuthService } from '../../../core/services/auth.service';
                 <i class="bi bi-journal-bookmark me-1"></i>Carreras
               </a>
             </li>
+             <li class="nav-item">
+              <a
+                class="nav-link"
+                routerLink="/userManual"
+                routerLinkActive="active"
+              >
+                <i class="bi bi-journal-bookmark me-1"></i>Manual del Usuario
+              </a>
+            </li>
           </ul>
           
 
