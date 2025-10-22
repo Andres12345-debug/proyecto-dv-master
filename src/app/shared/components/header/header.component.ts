@@ -69,7 +69,7 @@ import { AuthService } from '../../../core/services/auth.service';
                 routerLink="/userManual"
                 routerLinkActive="active"
               >
-                <i class="bi bi-journal-bookmark me-1"></i>Manual del Usuario
+<i class="bi bi-info-circle me-1"></i>Manual del Usuario
               </a>
             </li>
           </ul>
