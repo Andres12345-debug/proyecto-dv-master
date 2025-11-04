@@ -94,6 +94,10 @@ import { AuthService } from "../../../core/services/auth.service"
             {{ isLoading ? 'Iniciando sesión...' : 'Iniciar Sesión' }}
           </button>
 
+          
+            <div class="text-end mb-3">
+           <a routerLink="/auth/forgot" class="text-decoration-none">¿Olvidaste tu contraseña?</a>
+        </div>
           <div class="text-center">
             <p class="mb-0">
               ¿No tienes cuenta?
@@ -179,7 +183,7 @@ export class LoginComponent implements OnInit {
     private fb: FormBuilder,
     private authService: AuthService,
     private router: Router,
-  ) {}
+  ) { }
 
   ngOnInit(): void {
     this.initForm()
@@ -202,26 +206,26 @@ export class LoginComponent implements OnInit {
   }
 
   onSubmit(): void {
-    if (this.loginForm.valid) {
-      this.isLoading = true
-      this.errorMessage = ""
+  if (this.loginForm.invalid || this.isLoading) return; // ⬅️ evita doble post
 
-      this.authService.login(this.loginForm.value).subscribe({
-        next: (response) => {
-          this.isLoading = false
-          if (response.success) {
-            this.router.navigate(["/dashboard"])
-          }
-        },
-        error: (error) => {
-          this.isLoading = false
-          this.errorMessage = error.error?.message || "Error al iniciar sesión. Intenta nuevamente."
-        },
-      })
-    } else {
-      this.markFormGroupTouched()
-    }
-  }
+  this.isLoading = true;
+  this.errorMessage = "";
+
+  this.authService.login(this.loginForm.value).subscribe({
+    next: (response) => {
+      this.isLoading = false;
+      if (response.success) {
+        this.authService.setSession(response.token, response.user); // asegúrate de guardar sesión
+        this.router.navigate(["/dashboard"]);
+      }
+    },
+    error: (error) => {
+      this.isLoading = false;
+      this.errorMessage = error?.error?.message || "Error al iniciar sesión. Intenta nuevamente.";
+    },
+  });
+}
+
 
   private markFormGroupTouched(): void {
     Object.keys(this.loginForm.controls).forEach((key) => {
