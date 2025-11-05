@@ -1,7 +1,7 @@
 const express = require("express")
-const { query, param } = require("express-validator")
+const { query, param, body, validationResult } = require("express-validator")
 const { pool } = require("../config/database")
-const { authenticateToken } = require("../middleware/auth")
+const { authenticateToken, requireAdmin } = require("../middleware/auth")
 
 const router = express.Router()
 
@@ -11,7 +11,7 @@ async function executeQuery(sql, params = []) {
   return rows
 }
 
-// Listar carreras con paginación y búsqueda opcional
+// ========== LISTAR (paginado + búsqueda opcional) ==========
 router.get(
   "/",
   [
@@ -22,6 +22,11 @@ router.get(
   ],
   async (req, res) => {
     try {
+      const errors = validationResult(req)
+      if (!errors.isEmpty()) {
+        return res.status(400).json({ error: "Parámetros inválidos", details: errors.array() })
+      }
+
       const page = parseInt(req.query.page) || 1
       const limit = parseInt(req.query.limit) || 20
       const offset = (page - 1) * limit
@@ -70,94 +75,79 @@ router.get(
   }
 )
 
-/**
- * ✅ Obtener TODAS las carreras de la tabla (todas las columnas) sin paginación ni filtros
- *    Útil para combos, exportaciones, o vistas completas.
- */
-router.get(
-  "/all",
-  [authenticateToken],
-  async (req, res) => {
-    try {
-      const careers = await executeQuery(
-        `
-        SELECT
-          c.*
-        FROM careers c
-        ORDER BY c.name ASC
-        `
-      )
-
-      res.json(careers)
-    } catch (error) {
-      console.error("Error al obtener todas las carreras:", error)
-      res.status(500).json({ error: "Error al obtener todas las carreras" })
-    }
+// ========== OBTENER TODAS (sin paginar) ==========
+router.get("/all", [authenticateToken], async (req, res) => {
+  try {
+    const careers = await executeQuery(
+      `
+      SELECT c.*
+      FROM careers c
+      ORDER BY c.name ASC
+      `
+    )
+    res.json(careers)
+  } catch (error) {
+    console.error("Error al obtener todas las carreras:", error)
+    res.status(500).json({ error: "Error al obtener todas las carreras" })
   }
-)
+})
 
-/**
- * (Opcional) ✅ Obtener TODAS las carreras con sus aptitudes relacionadas
- *   - Requiere tablas: aptitudes(a.id, a.name, a.description)
- *     y career_aptitudes(career_id, aptitude_id)
- *   - Devuelve una lista de carreras; cada carrera trae un arreglo `aptitudes`.
- *   - Compatible con MySQL 8+ usando JSON_ARRAYAGG/JSON_OBJECT.
- */
-router.get(
-  "/all/with-aptitudes",
-  [authenticateToken],
-  async (req, res) => {
-    try {
-      const rows = await executeQuery(
-        `
-        SELECT
-          c.id,
-          c.name,
-          c.description,
-          c.duration_years,
-          COALESCE(
-            JSON_ARRAYAGG(
-              CASE
-                WHEN a.id IS NULL THEN NULL
-                ELSE JSON_OBJECT(
-                  'id', a.id,
-                  'name', a.name,
-                  'description', a.description
-                )
-              END
-            ),
-            JSON_ARRAY()
-          ) AS aptitudes
-        FROM careers c
-        LEFT JOIN career_aptitudes ca ON ca.career_id = c.id
-        LEFT JOIN aptitudes a ON a.id = ca.aptitude_id
-        GROUP BY c.id, c.name, c.description, c.duration_years
-        ORDER BY c.name ASC
-        `
-      )
+// ========== OBTENER TODAS con APTITUDES (MySQL 8+) ==========
+router.get("/all/with-aptitudes", [authenticateToken], async (req, res) => {
+  try {
+    const rows = await executeQuery(
+      `
+      SELECT
+        c.id,
+        c.name,
+        c.description,
+        c.duration_years,
+        COALESCE(
+          JSON_ARRAYAGG(
+            CASE
+              WHEN a.id IS NULL THEN NULL
+              ELSE JSON_OBJECT(
+                'id', a.id,
+                'name', a.name,
+                'description', a.description
+              )
+            END
+          ),
+          JSON_ARRAY()
+        ) AS aptitudes
+      FROM careers c
+      LEFT JOIN career_aptitudes ca ON ca.career_id = c.id
+      LEFT JOIN aptitudes a ON a.id = ca.aptitude_id
+      GROUP BY c.id, c.name, c.description, c.duration_years
+      ORDER BY c.name ASC
+      `
+    )
 
-      // Quitar posibles NULL dentro del array si alguna carrera no tiene aptitudes
-      const data = rows.map(r => ({
-        ...r,
-        aptitudes: Array.isArray(r.aptitudes)
-          ? r.aptitudes.filter(Boolean)
-          : JSON.parse(r.aptitudes || "[]").filter(Boolean)
-      }))
+    const data = rows.map((r) => ({
+      ...r,
+      aptitudes: Array.isArray(r.aptitudes)
+        ? r.aptitudes.filter(Boolean)
+        : JSON.parse(r.aptitudes || "[]").filter(Boolean),
+    }))
 
-      res.json(data)
-    } catch (error) {
-      console.error("Error en GET /careers/all/with-aptitudes:", error)
-      res.status(500).json({ error: "Error al obtener las carreras con aptitudes" })
-    }
+    res.json(data)
+  } catch (error) {
+    console.error("Error en GET /careers/all/with-aptitudes:", error)
+    res.status(500).json({ error: "Error al obtener las carreras con aptitudes" })
   }
-)
+})
 
-// Obtener detalle de una carrera por ID con aptitudes relacionadas
+// ========== DETALLE por ID (con aptitudes) ==========
 router.get(
   "/:id",
   [authenticateToken, param("id").isInt().withMessage("ID debe ser un número")],
   async (req, res) => {
     try {
+      const errors = validationResult(req)
+      if (!errors.isEmpty()) {
+        return res.status(400).json({ error: "Parámetros inválidos", details: errors.array() })
+      }
+
       const { id } = req.params
       const careers = await executeQuery(
         `
@@ -176,7 +166,6 @@ router.get(
         return res.status(404).json({ error: "Carrera no encontrada" })
       }
 
-      // Obtener aptitudes relacionadas
       const aptitudes = await executeQuery(
         `
         SELECT a.id, a.name, a.description
@@ -192,6 +181,170 @@ router.get(
     } catch (error) {
       console.error("Error en GET /careers/:id", error)
       res.status(500).json({ error: "Error al obtener la carrera" })
+    }
+  }
+)
+
+/* =========================================================
+   AQUI VIENEN LAS RUTAS SOLO PARA ADMIN: CREAR / EDITAR / BORRAR
+   ========================================================= */
+
+// ========== CREAR carrera (ADMIN) ==========
+router.post(
+  "/",
+  [
+    authenticateToken,
+    requireAdmin,
+    body("name").trim().isLength({ min: 2, max: 150 }).withMessage("El nombre debe tener entre 2 y 150 caracteres"),
+    body("description").optional().isLength({ max: 2000 }).withMessage("Descripción muy larga"),
+    body("duration_years").optional().isInt({ min: 1, max: 20 }).withMessage("La duración debe estar entre 1 y 20 años"),
+  ],
+  async (req, res) => {
+    try {
+      const errors = validationResult(req)
+      if (!errors.isEmpty()) {
+        return res.status(400).json({ success: false, errors: errors.array() })
+      }
+
+      const { name, description = null, duration_years = null } = req.body
+
+      // Evitar duplicados por nombre
+      const existing = await executeQuery("SELECT id FROM careers WHERE name = ?", [name])
+      if (existing.length > 0) {
+        return res.status(409).json({ success: false, message: "Ya existe una carrera con ese nombre" })
+      }
+
+      const result = await executeQuery(
+        `
+        INSERT INTO careers (name, description, duration_years)
+        VALUES (?, ?, ?)
+        `,
+        [name, description, duration_years]
+      )
+
+      const created = await executeQuery(
+        `SELECT id, name, description, duration_years FROM careers WHERE id = ?`,
+        [result.insertId]
+      )
+
+      res.status(201).json({ success: true, message: "Carrera creada", career: created[0] })
+    } catch (error) {
+      console.error("Error en POST /careers:", error)
+      res.status(500).json({ success: false, message: "Error al crear la carrera" })
+    }
+  }
+)
+
+// ========== EDITAR carrera (ADMIN) ==========
+router.put(
+  "/:id",
+  [
+    authenticateToken,
+    requireAdmin,
+    param("id").isInt().withMessage("ID inválido"),
+    body("name").optional().trim().isLength({ min: 2, max: 150 }),
+    body("description").optional().isLength({ max: 2000 }),
+    body("duration_years").optional().isInt({ min: 1, max: 20 }),
+  ],
+  async (req, res) => {
+    const conn = await pool.getConnection()
+    try {
+      const errors = validationResult(req)
+      if (!errors.isEmpty()) {
+        return res.status(400).json({ success: false, errors: errors.array() })
+      }
+
+      const id = parseInt(req.params.id, 10)
+      const { name, description, duration_years } = req.body
+
+      // existe?
+      const [exists] = await conn.query("SELECT id FROM careers WHERE id = ?", [id])
+      if (exists.length === 0) {
+        conn.release()
+        return res.status(404).json({ success: false, message: "Carrera no encontrada" })
+      }
+
+      // Si cambia nombre, validar duplicado
+      if (typeof name === "string" && name.trim() !== "") {
+        const [dup] = await conn.query("SELECT id FROM careers WHERE name = ? AND id <> ?", [name, id])
+        if (dup.length > 0) {
+          conn.release()
+          return res.status(409).json({ success: false, message: "Ya existe una carrera con ese nombre" })
+        }
+      }
+
+      // Build update dinámico
+      const fields = []
+      const vals = []
+      if (typeof name !== "undefined") { fields.push("name = ?"); vals.push(name) }
+      if (typeof description !== "undefined") { fields.push("description = ?"); vals.push(description) }
+      if (typeof duration_years !== "undefined") { fields.push("duration_years = ?"); vals.push(duration_years) }
+
+      if (fields.length === 0) {
+        conn.release()
+        return res.status(400).json({ success: false, message: "No hay cambios a aplicar" })
+      }
+
+      vals.push(id)
+      await conn.query(`UPDATE careers SET ${fields.join(", ")} WHERE id = ?`, vals)
+
+      const [updated] = await conn.query(
+        "SELECT id, name, description, duration_years FROM careers WHERE id = ?",
+        [id]
+      )
+
+      conn.release()
+      res.json({ success: true, message: "Carrera actualizada", career: updated[0] })
+    } catch (error) {
+      conn.release()
+      console.error("Error en PUT /careers/:id:", error)
+      res.status(500).json({ success: false, message: "Error al actualizar la carrera" })
+    }
+  }
+)
+
+// ========== BORRAR carrera (ADMIN) ==========
+router.delete(
+  "/:id",
+  [authenticateToken, requireAdmin, param("id").isInt().withMessage("ID inválido")],
+  async (req, res) => {
+    const conn = await pool.getConnection()
+    try {
+      const errors = validationResult(req)
+      if (!errors.isEmpty()) {
+        conn.release()
+        return res.status(400).json({ success: false, errors: errors.array() })
+      }
+
+      const id = parseInt(req.params.id, 10)
+
+      // Existe?
+      const [exists] = await conn.query("SELECT id FROM careers WHERE id = ?", [id])
+      if (exists.length === 0) {
+        conn.release()
+        return res.status(404).json({ success: false, message: "Carrera no encontrada" })
+      }
+
+      await conn.beginTransaction()
+
+      // Si tienes FK sin cascade, borra relaciones primero:
+      try {
+        await conn.query("DELETE FROM career_aptitudes WHERE career_id = ?", [id])
+      } catch (_) {
+        // si no existe la tabla/relación, no pasa nada
+      }
+
+      // Hard delete (si prefieres soft delete, añade columna y ajusta)
+      await conn.query("DELETE FROM careers WHERE id = ?", [id])
+
+      await conn.commit()
+      conn.release()
+      res.json({ success: true, message: "Carrera eliminada" })
+    } catch (error) {
+      await conn.rollback()
+      conn.release()
+      console.error("Error en DELETE /careers/:id:", error)
+      res.status(500).json({ success: false, message: "Error al eliminar la carrera" })
     }
   }
 )

@@ -4,6 +4,7 @@ const express = require("express");
 const cors = require("cors");
 const helmet = require("helmet");
 const rateLimit = require("express-rate-limit");
+const adminRoutes = require("./routes/admin");
 
 // Rutas
 const authRoutes = require("./routes/auth");
@@ -56,6 +57,7 @@ app.use("/api/test", testsRouter);          // Tests vocacionales
 app.use("/api/universities", universityRoutes);
 app.use("/api/users", userRoutes);
 app.use("/api/careers", careersRouter);
+app.use("/api/admin", adminRoutes);
 
 // =======================================
 // 🩺 Health check

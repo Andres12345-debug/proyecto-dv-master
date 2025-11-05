@@ -14,26 +14,15 @@ async function executeQuery(sql, params = []) {
 // GET /api/admin/dashboard - Estadísticas del dashboard
 router.get("/dashboard", authenticateToken, requireAdmin, async (req, res) => {
   try {
-    // Obtener estadísticas generales
     const stats = await Promise.all([
-      // Total de usuarios
       executeQuery("SELECT COUNT(*) as total FROM users WHERE deleted_at IS NULL"),
-      // Usuarios registrados hoy
       executeQuery("SELECT COUNT(*) as total FROM users WHERE DATE(created_at) = CURDATE() AND deleted_at IS NULL"),
-      // Total de tests realizados
       executeQuery("SELECT COUNT(*) as total FROM test_results"),
-      // Tests realizados hoy
       executeQuery("SELECT COUNT(*) as total FROM test_results WHERE DATE(completed_at) = CURDATE()"),
-      // Total de universidades
       executeQuery("SELECT COUNT(*) as total FROM universities WHERE deleted_at IS NULL"),
-      // Total de preguntas activas
       executeQuery("SELECT COUNT(*) as total FROM questions WHERE active = TRUE"),
-      // Usuarios más activos (últimos 30 días)
       executeQuery(`
-        SELECT
-          u.name,
-          u.email,
-          COUNT(tr.id) as tests_count
+        SELECT u.name, u.email, COUNT(tr.id) as tests_count
         FROM users u
         LEFT JOIN test_results tr ON u.id = tr.user_id
           AND tr.completed_at >= DATE_SUB(NOW(), INTERVAL 30 DAY)
@@ -42,11 +31,8 @@ router.get("/dashboard", authenticateToken, requireAdmin, async (req, res) => {
         ORDER BY tests_count DESC
         LIMIT 10
       `),
-      // Tests por día (últimos 7 días)
       executeQuery(`
-        SELECT
-          DATE(completed_at) as date,
-          COUNT(*) as count
+        SELECT DATE(completed_at) as date, COUNT(*) as count
         FROM test_results
         WHERE completed_at >= DATE_SUB(NOW(), INTERVAL 7 DAY)
         GROUP BY DATE(completed_at)
@@ -68,9 +54,7 @@ router.get("/dashboard", authenticateToken, requireAdmin, async (req, res) => {
     res.json(dashboard)
   } catch (error) {
     console.error("Error obteniendo estadísticas:", error)
-    res.status(500).json({
-      error: "Error obteniendo estadísticas del dashboard",
-    })
+    res.status(500).json({ error: "Error obteniendo estadísticas del dashboard" })
   }
 })
 
@@ -80,25 +64,21 @@ router.get(
   [
     authenticateToken,
     requireAdmin,
-    query("page").optional().isInt({ min: 1 }).withMessage("Página debe ser un número positivo"),
-    query("limit").optional().isInt({ min: 1, max: 100 }).withMessage("Límite debe estar entre 1 y 100"),
-    query("search").optional().trim().isLength({ max: 100 }),
+    query("page").optional().isInt({ min: 1 }),
+    query("limit").optional().isInt({ min: 1, max: 100 }),
+    query("search").optional().trim(),
     query("role").optional().isIn(["user", "admin"]),
   ],
   async (req, res) => {
     try {
       const errors = validationResult(req)
       if (!errors.isEmpty()) {
-        return res.status(400).json({
-          error: "Parámetros inválidos",
-          details: errors.array(),
-        })
+        return res.status(400).json({ error: "Parámetros inválidos", details: errors.array() })
       }
 
       const { page = 1, limit = 20, search = "", role = "" } = req.query
       const offset = (page - 1) * limit
 
-      // Construir query dinámicamente
       const whereConditions = ["deleted_at IS NULL"]
       const queryParams = []
 
@@ -114,145 +94,90 @@ router.get(
 
       const whereClause = whereConditions.join(" AND ")
 
-      // Obtener usuarios
       const users = await executeQuery(
         `
-      SELECT
-        u.id,
-        u.name,
-        u.email,
-        u.age,
-        u.location,
-        u.education_level,
-        u.role,
-        u.created_at,
-        u.last_login,
-        COUNT(tr.id) as tests_count
-      FROM users u
-      LEFT JOIN test_results tr ON u.id = tr.user_id
-      WHERE ${whereClause}
-      GROUP BY u.id
-      ORDER BY u.created_at DESC
-      LIMIT ? OFFSET ?
-    `,
-        [...queryParams, Number.parseInt(limit), Number.parseInt(offset)],
+        SELECT u.id, u.name, u.email, u.age, u.location, u.education_level,
+               u.role, u.created_at, u.last_login, COUNT(tr.id) as tests_count
+        FROM users u
+        LEFT JOIN test_results tr ON u.id = tr.user_id
+        WHERE ${whereClause}
+        GROUP BY u.id
+        ORDER BY u.created_at DESC
+        LIMIT ? OFFSET ?
+      `,
+        [...queryParams, Number(limit), Number(offset)]
       )
 
-      // Obtener total para paginación
-      const totalResult = await executeQuery(
-        `
-      SELECT COUNT(*) as total
-      FROM users
-      WHERE ${whereClause}
-    `,
-        queryParams,
-      )
-
+      const totalResult = await executeQuery(`SELECT COUNT(*) as total FROM users WHERE ${whereClause}`, queryParams)
       const total = totalResult[0].total
       const pages = Math.ceil(total / limit)
 
       res.json({
         users,
-        pagination: {
-          page: Number.parseInt(page),
-          limit: Number.parseInt(limit),
-          total,
-          pages,
-        },
+        pagination: { page: Number(page), limit: Number(limit), total, pages },
       })
     } catch (error) {
       console.error("Error obteniendo usuarios:", error)
-      res.status(500).json({
-        error: "Error obteniendo usuarios",
-      })
+      res.status(500).json({ error: "Error obteniendo usuarios" })
     }
-  },
+  }
 )
 
 // DELETE /api/admin/users/:id - Eliminar usuario
 router.delete(
   "/users/:id",
-  [authenticateToken, requireAdmin, param("id").isInt().withMessage("ID debe ser un número")],
+  [authenticateToken, requireAdmin, param("id").isInt()],
   async (req, res) => {
     try {
       const errors = validationResult(req)
       if (!errors.isEmpty()) {
-        return res.status(400).json({
-          error: "ID inválido",
-          details: errors.array(),
-        })
+        return res.status(400).json({ error: "ID inválido", details: errors.array() })
       }
 
       const userId = req.params.id
-
-      // Verificar que el usuario existe y no es admin
       const user = await executeQuery("SELECT id, role FROM users WHERE id = ? AND deleted_at IS NULL", [userId])
 
       if (user.length === 0) {
-        return res.status(404).json({
-          error: "Usuario no encontrado",
-        })
+        return res.status(404).json({ error: "Usuario no encontrado" })
       }
 
       if (user[0].role === "admin") {
-        return res.status(403).json({
-          error: "No se puede eliminar un usuario administrador",
-        })
+        return res.status(403).json({ error: "No se puede eliminar un administrador" })
       }
 
-      // Verificar que no es el usuario actual
-      if (Number.parseInt(userId) === req.user.id) {
-        return res.status(403).json({
-          error: "No puedes eliminar tu propia cuenta",
-        })
+      if (Number(userId) === req.user.id) {
+        return res.status(403).json({ error: "No puedes eliminar tu propia cuenta" })
       }
 
-      // Soft delete
       await executeQuery("UPDATE users SET deleted_at = NOW() WHERE id = ?", [userId])
-
-      res.json({
-        message: "Usuario eliminado exitosamente",
-      })
+      res.json({ message: "Usuario eliminado exitosamente" })
     } catch (error) {
       console.error("Error eliminando usuario:", error)
-      res.status(500).json({
-        error: "Error interno del servidor",
-      })
+      res.status(500).json({ error: "Error interno del servidor" })
     }
-  },
+  }
 )
 
 // GET /api/admin/tests - Obtener estadísticas de tests
 router.get("/tests", authenticateToken, requireAdmin, async (req, res) => {
   try {
-    // Estadísticas de tests
     const stats = await Promise.all([
-      // Tests por aptitud
       executeQuery(`
-        SELECT
-          a.name,
-          COUNT(ta.id) as count,
-          AVG(ta.score) as avg_score
+        SELECT a.name, COUNT(ta.id) as count, AVG(ta.score) as avg_score
         FROM aptitudes a
         LEFT JOIN test_aptitudes ta ON a.id = ta.aptitude_id
         GROUP BY a.id, a.name
         ORDER BY count DESC
       `),
-      // Tests por mes (últimos 12 meses)
       executeQuery(`
-        SELECT
-          DATE_FORMAT(completed_at, '%Y-%m') as month,
-          COUNT(*) as count
+        SELECT DATE_FORMAT(completed_at, '%Y-%m') as month, COUNT(*) as count
         FROM test_results
         WHERE completed_at >= DATE_SUB(NOW(), INTERVAL 12 MONTH)
         GROUP BY DATE_FORMAT(completed_at, '%Y-%m')
         ORDER BY month ASC
       `),
-      // Preguntas más respondidas
       executeQuery(`
-        SELECT
-          q.text,
-          COUNT(ta.id) as responses
+        SELECT q.text, COUNT(ta.id) as responses
         FROM questions q
         LEFT JOIN test_answers ta ON q.id = ta.question_id
         WHERE q.active = TRUE
@@ -269,9 +194,7 @@ router.get("/tests", authenticateToken, requireAdmin, async (req, res) => {
     })
   } catch (error) {
     console.error("Error obteniendo estadísticas de tests:", error)
-    res.status(500).json({
-      error: "Error obteniendo estadísticas de tests",
-    })
+    res.status(500).json({ error: "Error obteniendo estadísticas de tests" })
   }
 })
 
@@ -279,42 +202,27 @@ router.get("/tests", authenticateToken, requireAdmin, async (req, res) => {
 router.get("/universities/stats", authenticateToken, requireAdmin, async (req, res) => {
   try {
     const stats = await Promise.all([
-      // Universidades por país
       executeQuery(`
-        SELECT
-          country,
-          COUNT(*) as count
+        SELECT country, COUNT(*) as count
         FROM universities
         WHERE deleted_at IS NULL
         GROUP BY country
         ORDER BY count DESC
       `),
-      // Universidades por tipo
       executeQuery(`
-        SELECT
-          type,
-          COUNT(*) as count
+        SELECT type, COUNT(*) as count
         FROM universities
         WHERE deleted_at IS NULL
         GROUP BY type
       `),
-      // Universidades por modalidad
       executeQuery(`
-        SELECT
-          modality,
-          COUNT(*) as count
+        SELECT modality, COUNT(*) as count
         FROM universities
         WHERE deleted_at IS NULL
         GROUP BY modality
       `),
-      // Top universidades por rating
       executeQuery(`
-        SELECT
-          name,
-          country,
-          rating,
-          type,
-          modality
+        SELECT name, country, rating, type, modality
         FROM universities
         WHERE deleted_at IS NULL
         ORDER BY rating DESC
@@ -330,27 +238,18 @@ router.get("/universities/stats", authenticateToken, requireAdmin, async (req, r
     })
   } catch (error) {
     console.error("Error obteniendo estadísticas de universidades:", error)
-    res.status(500).json({
-      error: "Error obteniendo estadísticas de universidades",
-    })
+    res.status(500).json({ error: "Error obteniendo estadísticas de universidades" })
   }
 })
 
-// GET /api/admin/logs - Obtener logs del sistema (si existe la tabla)
+// GET /api/admin/logs - Obtener logs del sistema
 router.get(
   "/logs",
-  [
-    authenticateToken,
-    requireAdmin,
-    query("page").optional().isInt({ min: 1 }),
-    query("limit").optional().isInt({ min: 1, max: 100 }),
-    query("action").optional().trim(),
-  ],
+  [authenticateToken, requireAdmin, query("page").optional().isInt({ min: 1 }), query("limit").optional().isInt({ min: 1, max: 100 }), query("action").optional().trim()],
   async (req, res) => {
     try {
       const { page = 1, limit = 50, action = "" } = req.query
       const offset = (page - 1) * limit
-
       const whereConditions = []
       const queryParams = []
 
@@ -363,60 +262,32 @@ router.get(
 
       const logs = await executeQuery(
         `
-      SELECT
-        sl.id,
-        sl.user_id,
-        u.name as user_name,
-        sl.action,
-        sl.table_name,
-        sl.record_id,
-        sl.ip_address,
-        sl.created_at
-      FROM system_logs sl
-      LEFT JOIN users u ON sl.user_id = u.id
-      ${whereClause}
-      ORDER BY sl.created_at DESC
-      LIMIT ? OFFSET ?
-    `,
-        [...queryParams, Number.parseInt(limit), Number.parseInt(offset)],
+        SELECT sl.id, sl.user_id, u.name as user_name, sl.action, sl.table_name, sl.record_id, sl.ip_address, sl.created_at
+        FROM system_logs sl
+        LEFT JOIN users u ON sl.user_id = u.id
+        ${whereClause}
+        ORDER BY sl.created_at DESC
+        LIMIT ? OFFSET ?
+      `,
+        [...queryParams, Number(limit), Number(offset)]
       )
 
-      const totalResult = await executeQuery(
-        `
-      SELECT COUNT(*) as total
-      FROM system_logs sl
-      ${whereClause}
-    `,
-        queryParams,
-      )
-
+      const totalResult = await executeQuery(`SELECT COUNT(*) as total FROM system_logs sl ${whereClause}`, queryParams)
       const total = totalResult[0].total
       const pages = Math.ceil(total / limit)
 
       res.json({
         logs,
-        pagination: {
-          page: Number.parseInt(page),
-          limit: Number.parseInt(limit),
-          total,
-          pages,
-        },
+        pagination: { page: Number(page), limit: Number(limit), total, pages },
       })
     } catch (error) {
-      // Si la tabla no existe, devolver array vacío
       if (error.code === "ER_NO_SUCH_TABLE") {
-        return res.json({
-          logs: [],
-          pagination: { page: 1, limit: 50, total: 0, pages: 0 },
-        })
+        return res.json({ logs: [], pagination: { page: 1, limit: 50, total: 0, pages: 0 } })
       }
-
       console.error("Error obteniendo logs:", error)
-      res.status(500).json({
-        error: "Error obteniendo logs del sistema",
-      })
+      res.status(500).json({ error: "Error obteniendo logs del sistema" })
     }
-  },
+  }
 )
 
 module.exports = router
