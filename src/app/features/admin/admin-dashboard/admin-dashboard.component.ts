@@ -66,7 +66,7 @@ interface DashboardStats {
           <div class="stat-card bg-primary text-white">
             <div class="stat-content">
               <div class="stat-icon">
-                <i class="material-icons">people</i>
+                <i class="material-icons"></i>
               </div>
               <div class="stat-details">
                 <h3>{{ stats.totalUsers }}</h3>
@@ -81,7 +81,7 @@ interface DashboardStats {
           <div class="stat-card bg-success text-white">
             <div class="stat-content">
               <div class="stat-icon">
-                <i class="material-icons">quiz</i>
+                <i class="material-icons"></i>
               </div>
               <div class="stat-details">
                 <h3>{{ stats.totalTests }}</h3>
@@ -96,7 +96,7 @@ interface DashboardStats {
           <div class="stat-card bg-info text-white">
             <div class="stat-content">
               <div class="stat-icon">
-                <i class="material-icons">school</i>
+                <i class="material-icons"></i>
               </div>
               <div class="stat-details">
                 <h3>{{ stats.totalUniversities }}</h3>
@@ -111,7 +111,7 @@ interface DashboardStats {
           <div class="stat-card bg-warning text-white">
             <div class="stat-content">
               <div class="stat-icon">
-                <i class="material-icons">help_outline</i>
+                <i class="material-icons"></i>
               </div>
               <div class="stat-details">
                 <h3>{{ stats.activeQuestions }}</h3>
@@ -126,7 +126,7 @@ interface DashboardStats {
           <div class="stat-card bg-secondary text-white">
             <div class="stat-content">
               <div class="stat-icon">
-                <i class="material-icons">trending_up</i>
+                <i class="material-icons"></i>
               </div>
               <div class="stat-details">
                 <h3>{{ getActiveUsersCount() }}</h3>
@@ -160,7 +160,7 @@ interface DashboardStats {
           <div class="card shadow-sm h-100">
             <div class="card-header">
               <h5 class="mb-0">
-                <i class="material-icons me-2">show_chart</i>
+                <i class="material-icons me-2"></i>
                 Tests Realizados (Últimos 7 días)
               </h5>
             </div>
@@ -169,7 +169,7 @@ interface DashboardStats {
                 <canvas #testsChart width="400" height="200"></canvas>
               </div>
               <div *ngIf="!stats || !stats.testsPerDay || stats.testsPerDay.length === 0" class="text-center py-4">
-                <i class="material-icons text-muted mb-3" style="font-size: 48px;">show_chart</i>
+                <i class="material-icons text-muted mb-3" style="font-size: 48px;"></i>
                 <p class="text-muted">No hay datos suficientes para mostrar el gráfico</p>
               </div>
             </div>
@@ -181,32 +181,29 @@ interface DashboardStats {
           <div class="card shadow-sm h-100">
             <div class="card-header">
               <h5 class="mb-0">
-                <i class="material-icons me-2">flash_on</i>
+                <i class="material-icons me-2"></i>
                 Acciones Rápidas
               </h5>
             </div>
             <div class="card-body">
               <div class="d-grid gap-3">
                 <a routerLink="/admin/users" class="btn btn-outline-primary">
-                  <i class="material-icons me-2">people</i>
+                  <i class="material-icons me-2"></i>
                   Gestionar Usuarios
                 </a>
                 <a routerLink="/admin/universities" class="btn btn-outline-success">
-                  <i class="material-icons me-2">school</i>
+                  <i class="material-icons me-2"></i>
                   Gestionar Universidades
                 </a>
                 <a routerLink="/admin/questions" class="btn btn-outline-info">
-                  <i class="material-icons me-2">quiz</i>
+                  <i class="material-icons me-2"></i>
                   Gestionar Preguntas
                 </a>
                 <button class="btn btn-outline-warning" (click)="exportData()">
-                  <i class="material-icons me-2">download</i>
+                  <i class="material-icons me-2"></i>
                   Exportar Datos
                 </button>
-                <button class="btn btn-outline-secondary" (click)="viewLogs()">
-                  <i class="material-icons me-2">description</i>
-                  Ver Logs del Sistema
-                </button>
+                
               </div>
             </div>
           </div>
@@ -219,7 +216,7 @@ interface DashboardStats {
           <div class="card shadow-sm">
             <div class="card-header d-flex justify-content-between align-items-center">
               <h5 class="mb-0">
-                <i class="material-icons me-2">people</i>
+                <i class="material-icons me-2"></i>
                 Usuarios Más Activos (Últimos 30 días)
               </h5>
               <a routerLink="/admin/users" class="btn btn-sm btn-outline-primary">
@@ -228,7 +225,7 @@ interface DashboardStats {
             </div>
             <div class="card-body">
               <div *ngIf="!stats || !stats.activeUsers || stats.activeUsers.length === 0" class="text-center py-4">
-                <i class="material-icons text-muted mb-3" style="font-size: 48px;">people</i>
+                <i class="material-icons text-muted mb-3" style="font-size: 48px;">Usuarios</i>
                 <p class="text-muted">No hay usuarios activos en los últimos 30 días</p>
               </div>
 

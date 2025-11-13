@@ -19,7 +19,7 @@ import { University } from "../../../core/models/university.model"
           <div class="d-flex justify-content-between align-items-center">
             <div>
               <h1 class="display-6 fw-bold text-primary-custom mb-2">
-                <i class="material-icons me-3">school</i>
+                <i class="material-icons me-3"></i>
                 Gestión de Universidades
               </h1>
               <p class="lead text-muted">
@@ -28,11 +28,11 @@ import { University } from "../../../core/models/university.model"
             </div>
             <div class="admin-actions">
               <button class="btn btn-outline-secondary me-2" (click)="exportUniversities()">
-                <i class="material-icons me-2">download</i>
+                <i class="material-icons me-2"></i>
                 Exportar
               </button>
               <button class="btn btn-success" (click)="openCreateModal()">
-                <i class="material-icons me-2">add</i>
+                <i class="material-icons me-2"></i>
                 Nueva Universidad
               </button>
             </div>
@@ -46,7 +46,7 @@ import { University } from "../../../core/models/university.model"
           <div class="stat-card bg-primary text-white">
             <div class="stat-content">
               <div class="stat-icon">
-                <i class="material-icons">school</i>
+                <i class="material-icons"></i>
               </div>
               <div class="stat-details">
                 <h3>{{ stats.total || 0 }}</h3>
@@ -59,7 +59,7 @@ import { University } from "../../../core/models/university.model"
           <div class="stat-card bg-success text-white">
             <div class="stat-content">
               <div class="stat-icon">
-                <i class="material-icons">public</i>
+                <i class="material-icons"></i>
               </div>
               <div class="stat-details">
                 <h3>{{ getPublicUniversitiesCount() }}</h3>
@@ -127,7 +127,7 @@ import { University } from "../../../core/models/university.model"
                   </td>
                   <td>
                     <div class="location-info">
-                      <i class="material-icons me-1">location_on</i>
+                      <i class="material-icons me-1"></i>
                       {{ university.location }}, {{ university.country }}
                     </div>
                   </td>
@@ -146,7 +146,7 @@ import { University } from "../../../core/models/university.model"
                   </td>
                   <td>
                     <div class="rating">
-                      <i class="material-icons text-warning me-1">star</i>
+                      <i class="material-icons text-warning me-1"></i>
                       {{ university.rating }}
                     </div>
                   </td>
@@ -162,21 +162,21 @@ import { University } from "../../../core/models/university.model"
                         (click)="viewUniversity(university)"
                         title="Ver detalles"
                       >
-                        <i class="material-icons">visibility</i>
+                        <i class="material-icons">ver</i>
                       </button>
                       <button
                         class="btn btn-outline-info"
                         (click)="editUniversity(university)"
                         title="Editar"
                       >
-                        <i class="material-icons">edit</i>
+                        <i class="material-icons">editar</i>
                       </button>
                       <button
                         class="btn btn-outline-danger"
                         (click)="deleteUniversity(university)"
                         title="Eliminar"
                       >
-                        <i class="material-icons">delete</i>
+                        <i class="material-icons">eliminar</i>
                       </button>
                     </div>
                   </td>
@@ -191,7 +191,7 @@ import { University } from "../../../core/models/university.model"
             <h5>No hay universidades registradas</h5>
             <p class="text-muted">Comienza agregando la primera universidad al sistema</p>
             <button class="btn btn-primary" (click)="openCreateModal()">
-              <i class="material-icons me-2">add</i>
+              <i class="material-icons me-2"></i>
               Agregar Universidad
             </button>
           </div>
@@ -222,7 +222,7 @@ import { University } from "../../../core/models/university.model"
         <div class="modal-content">
           <div class="modal-header">
             <h5 class="modal-title">
-              <i class="material-icons me-2">school</i>
+              <i class="material-icons me-2"></i>
               {{ isEditMode ? 'Editar Universidad' : 'Nueva Universidad' }}
             </h5>
             <button type="button" class="btn-close" data-bs-dismiss="modal"></button>

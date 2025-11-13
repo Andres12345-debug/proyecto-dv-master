@@ -20,7 +20,7 @@ import { FormsModule } from "@angular/forms"
           <div class="d-flex justify-content-between align-items-center">
             <div>
               <h1 class="display-6 fw-bold text-primary-custom mb-2">
-                <i class="material-icons me-3">people</i>
+                <i class="material-icons me-3">Usuarios</i>
                 Gestión de Usuarios
               </h1>
               <p class="lead text-muted">
@@ -29,11 +29,11 @@ import { FormsModule } from "@angular/forms"
             </div>
             <div class="admin-actions">
               <button class="btn btn-outline-secondary me-2" (click)="exportUsers()">
-                <i class="material-icons me-2">download</i>
+                <i class="material-icons me-2"></i>
                 Exportar
               </button>
               <button class="btn btn-primary" (click)="refreshUsers()">
-                <i class="material-icons me-2">refresh</i>
+                <i class="material-icons me-2"></i>
                 Actualizar
               </button>
             </div>
@@ -47,7 +47,7 @@ import { FormsModule } from "@angular/forms"
           <form [formGroup]="filterForm" class="row g-3">
             <div class="col-md-4">
               <label for="search" class="form-label">
-                <i class="material-icons me-1">search</i>
+                <i class="material-icons me-1"></i>
                 Buscar Usuario
               </label>
               <input
@@ -60,7 +60,7 @@ import { FormsModule } from "@angular/forms"
             </div>
             <div class="col-md-3">
               <label for="role" class="form-label">
-                <i class="material-icons me-1">admin_panel_settings</i>
+                <i class="material-icons me-1"></i>
                 Rol
               </label>
               <select id="role" class="form-select" formControlName="role">
@@ -125,7 +125,7 @@ import { FormsModule } from "@angular/forms"
                   <td>
                     <div class="d-flex align-items-center">
                       <div class="user-avatar me-3">
-                        <i class="material-icons">person</i>
+                        <i class="material-icons"></i>
                       </div>
                       <div>
                         <h6 class="mb-0">{{ user.name }}</h6>
@@ -136,15 +136,15 @@ import { FormsModule } from "@angular/forms"
                   <td>
                     <div class="user-info">
                       <div *ngIf="user.age" class="info-item">
-                        <i class="material-icons me-1">cake</i>
+                        <i class="material-icons me-1"></i>
                         {{ user.age }} años
                       </div>
                       <div *ngIf="user.location" class="info-item">
-                        <i class="material-icons me-1">location_on</i>
+                        <i class="material-icons me-1"></i>
                         {{ user.location }}
                       </div>
                       <div *ngIf="user.education_level" class="info-item">
-                        <i class="material-icons me-1">school</i>
+                        <i class="material-icons me-1"></i>
                         {{ user.education_level }}
                       </div>
                     </div>
@@ -180,21 +180,21 @@ import { FormsModule } from "@angular/forms"
                         (click)="viewUser(user)"
                         title="Ver perfil"
                       >
-                        <i class="material-icons">visibility</i>
+                        <i class="material-icons">ver</i>
                       </button>
                       <button
                         class="btn btn-outline-info"
                         (click)="editUser(user)"
                         title="Editar usuario"
                       >
-                        <i class="material-icons">edit</i>
+                        <i class="material-icons"></i>
                       </button>
                       <button
                         class="btn btn-outline-warning"
                         (click)="sendMessage(user)"
                         title="Enviar mensaje"
                       >
-                        <i class="material-icons">mail</i>
+                        <i class="material-icons"></i>
                       </button>
                       <button
                         class="btn btn-outline-danger"
@@ -202,7 +202,7 @@ import { FormsModule } from "@angular/forms"
                         title="Eliminar usuario"
                         [disabled]="user.role === 'admin'"
                       >
-                        <i class="material-icons">delete</i>
+                        <i class="material-icons">Eliminar</i>
                       </button>
                     </div>
                   </td>
@@ -213,13 +213,13 @@ import { FormsModule } from "@angular/forms"
 
           <!-- Empty State -->
           <div *ngIf="!isLoading && users.length === 0" class="text-center py-5">
-            <i class="material-icons text-muted mb-3" style="font-size: 64px;">people</i>
+            <i class="material-icons text-muted mb-3" style="font-size: 64px;">Usuarios</i>
             <h5>No se encontraron usuarios</h5>
             <p class="text-muted">
               Intenta ajustar los filtros de búsqueda para encontrar más resultados
             </p>
             <button class="btn btn-primary" (click)="clearFilters()">
-              <i class="material-icons me-2">refresh</i>
+              <i class="material-icons me-2"></i>
               Limpiar Filtros
             </button>
           </div>

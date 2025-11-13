@@ -49,11 +49,11 @@ interface Aptitude {
             </div>
             <div class="admin-actions">
               <button class="btn btn-outline-secondary me-2" (click)="exportQuestions()">
-                <i class="material-icons me-2">download</i>
+                <i class="material-icons me-2"></i>
                 Exportar
               </button>
               <button class="btn btn-success" (click)="openCreateModal()">
-                <i class="material-icons me-2">add</i>
+                <i class="material-icons me-2"></i>
                 Nueva Pregunta
               </button>
             </div>
@@ -67,7 +67,7 @@ interface Aptitude {
           <div class="stat-card bg-primary text-white">
             <div class="stat-content">
               <div class="stat-icon">
-                <i class="material-icons">quiz</i>
+                <i class="material-icons"></i>
               </div>
               <div class="stat-details">
                 <h3>{{ questions.length }}</h3>
@@ -80,7 +80,7 @@ interface Aptitude {
           <div class="stat-card bg-success text-white">
             <div class="stat-content">
               <div class="stat-icon">
-                <i class="material-icons">check_circle</i>
+                <i class="material-icons"></i>
               </div>
               <div class="stat-details">
                 <h3>{{ getActiveQuestionsCount() }}</h3>
@@ -93,7 +93,7 @@ interface Aptitude {
           <div class="stat-card bg-info text-white">
             <div class="stat-content">
               <div class="stat-icon">
-                <i class="material-icons">psychology</i>
+                <i class="material-icons"></i>
               </div>
               <div class="stat-details">
                 <h3>{{ aptitudes.length }}</h3>
@@ -106,7 +106,7 @@ interface Aptitude {
           <div class="stat-card bg-warning text-white">
             <div class="stat-content">
               <div class="stat-icon">
-                <i class="material-icons">list</i>
+                <i class="material-icons"></i>
               </div>
               <div class="stat-details">
                 <h3>{{ getTotalOptionsCount() }}</h3>
@@ -203,7 +203,7 @@ interface Aptitude {
                         (click)="deleteQuestion(question)"
                         title="Eliminar"
                       >
-                        <i class="material-icons">delete</i>
+                        <i class="material-icons">eliminar</i>
                       </button>
                     </div>
                   </td>
@@ -214,11 +214,11 @@ interface Aptitude {
 
           <!-- Empty State -->
           <div *ngIf="!isLoading && questions.length === 0" class="text-center py-5">
-            <i class="material-icons text-muted mb-3" style="font-size: 64px;">quiz</i>
+            <i class="material-icons text-muted mb-3" style="font-size: 64px;">Test</i>
             <h5>No hay preguntas registradas</h5>
             <p class="text-muted">Comienza agregando la primera pregunta del test vocacional</p>
             <button class="btn btn-primary" (click)="openCreateModal()">
-              <i class="material-icons me-2">add</i>
+              <i class="material-icons me-2"></i>
               Agregar Pregunta
             </button>
           </div>
@@ -249,7 +249,7 @@ interface Aptitude {
         <div class="modal-content">
           <div class="modal-header">
             <h5 class="modal-title">
-              <i class="material-icons me-2">quiz</i>
+              <i class="material-icons me-2"></i>
               {{ isEditMode ? 'Editar Pregunta' : 'Nueva Pregunta' }}
             </h5>
             <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
@@ -296,7 +296,7 @@ interface Aptitude {
                     class="btn btn-sm btn-outline-primary"
                     (click)="addOption()"
                   >
-                    <i class="material-icons me-1">add</i>
+                    <i class="material-icons me-1"></i>
                     Agregar Opción
                   </button>
                 </div>
@@ -317,7 +317,7 @@ interface Aptitude {
                             (click)="removeOption(i)"
                             [disabled]="options.length <= 2"
                           >
-                            <i class="material-icons">delete</i>
+                            <i class="material-icons">eliminar</i>
                           </button>
                         </div>
 
