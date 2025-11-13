@@ -259,21 +259,23 @@ import { University } from "../../../core/models/university.model"
 
           <!-- Actions -->
           <div class="card shadow-sm">
+            <div class="card-header">
+              <h5 class="mb-0">
+                <i class="material-icons me-2">Acciones rapidas</i>
+
+              </h5>
+            </div>
             <div class="card-body">
-              <h6 class="mb-3">¿Interesado en esta universidad?</h6>
               <div class="d-grid gap-2">
-                <button class="btn btn-primary">
-                  <i class="material-icons me-2">Guardar en Favoritos</i>
-
-                </button>
-                <button class="btn btn-outline-secondary">
-                  <i class="material-icons me-2">Compartir</i>
-
-                </button>
-                <a routerLink="/test" class="btn btn-outline-info">
-                  <i class="material-icons me-2">Hacer Test Vocacional</i>
+                <a routerLink="/test" class="btn btn-primary">
+                  <i class="material-icons me-2">Realizar Test Vocacional</i>
 
                 </a>
+                <a routerLink="/careers" class="btn btn-outline-secondary">
+                  <i class="material-icons me-2">Explorar Carreras</i>
+
+                </a>
+              
               </div>
             </div>
           </div>

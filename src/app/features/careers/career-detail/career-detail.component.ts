@@ -55,6 +55,7 @@ import { Career } from "../../../core/models/career.model"
         </div>
       </div>
     </div>
+    
 
     <!-- Estado de carga -->
     <div *ngIf="!career" class="container py-5 text-center">

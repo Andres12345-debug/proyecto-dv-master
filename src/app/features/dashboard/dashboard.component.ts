@@ -48,7 +48,7 @@ import { TestResult } from "../../core/models/test.model"
                class="btn btn-success btn-lg fw-bold px-4">
                TEST
             </a>
-            <a href="/carrers" 
+            <a href="/universities" 
                class="btn btn-outline-secondary btn-lg fw-bold px-4">
                YA SE QUE ESTUDIAR
             </a>

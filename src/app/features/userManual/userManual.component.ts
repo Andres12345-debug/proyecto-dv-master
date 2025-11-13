@@ -19,7 +19,7 @@ type ManualSection = {
   template: `
     <div class="manual-container container py-5" id="top">
       <header class="mb-4 text-center">
-        <h1 class="fw-bold text-primary mb-2">Manual del Usuario — VOCARE</h1>
+        <h1 class="fw-bold text-primary mb-2">Manual de Usuario — VOCARE</h1>
         <p class="lead text-muted mb-0">
           Guía paso a paso para registrarte, realizar el test vocacional y explorar universidades y carreras.
         </p>

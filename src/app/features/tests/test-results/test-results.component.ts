@@ -135,7 +135,7 @@ import { TestResult } from "../../../core/models/test.model"
                         </div>
                       </div>
                       <div class="university-location">
-                        <i class="material-icons me-1">location_on</i>
+                        <i class="material-icons me-1"></i>
                         {{ university.location }}, {{ university.country }}
                       </div>
                     </div>

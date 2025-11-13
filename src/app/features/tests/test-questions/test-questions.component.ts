@@ -44,7 +44,7 @@ import { Question, TestAnswer } from "../../../core/models/test.model"
             <div class="card-body p-5">
               <div class="question-header mb-4">
                 <div class="question-icon mb-3">
-                  <i class="material-icons">help_outline</i>
+                  <i class="material-icons"></i>
                 </div>
                 <h3 class="question-text">{{ currentQuestion.text }}</h3>
                 <p class="text-muted">Selecciona la opción que mejor te represente:</p>
@@ -102,7 +102,7 @@ import { Question, TestAnswer } from "../../../core/models/test.model"
 
                     <span *ngIf="currentQuestionIndex === questions.length - 1">
                       Finalizar Test
-                      <i class="material-icons ms-2">check</i>
+                      <i class="material-icons ms-2"></i>
                     </span>
                   </button>
                 </div>
